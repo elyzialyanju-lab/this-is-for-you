@@ -145,6 +145,42 @@
             z-index: 60;
             animation: flyUpHeart 1.2s ease-out forwards;
         }
+
+        /* Animasi kertas kalender ketiup angin dari 2008 ke 2026 */
+        @keyframes paperBlowAway {
+            0% {
+                opacity: 1;
+                transform: translate(0, 0) rotate(0deg) scale(1);
+            }
+            35% {
+                opacity: 0.95;
+                transform: translate(28px, -18px) rotate(10deg) skewX(-6deg) scale(1.03);
+            }
+            100% {
+                opacity: 0;
+                transform: translate(190px, -115px) rotate(36deg) skewX(-18deg) scale(0.72);
+            }
+        }
+
+        @keyframes paperSettleIn {
+            0% {
+                opacity: 0;
+                transform: translate(-24px, 14px) rotate(-6deg) scale(0.92);
+            }
+            100% {
+                opacity: 1;
+                transform: translate(0, 0) rotate(0deg) scale(1);
+            }
+        }
+
+        .calendar-sheet-fly {
+            animation: paperBlowAway 0.42s cubic-bezier(0.25, 0.8, 0.5, 1) forwards;
+            transform-origin: bottom left;
+        }
+
+        .calendar-sheet-land {
+            animation: paperSettleIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
     </style>
 </head>
 <body class="bg-romantic min-h-screen w-full relative flex items-center justify-center p-4">
@@ -238,71 +274,137 @@
             <div class="absolute -top-10 -right-10 w-28 h-28 bg-rose-100 rounded-full opacity-70 pointer-events-none"></div>
             <div class="absolute -bottom-10 -left-10 w-28 h-28 bg-pink-100 rounded-full opacity-70 pointer-events-none"></div>
 
-            <!-- Header Kartu: Indikator Voice Note / Pesan Spesial -->
-            <div class="relative flex items-center justify-between mb-4">
+            <!-- Header Kartu -->
+            <div class="relative flex items-center justify-between mb-3">
                 <span id="slideCounter" class="text-xs font-bold text-rose-500 bg-rose-50 px-3 py-1 rounded-full border border-rose-200">
-                    Pesan 1 / 3
+                    November 2026
                 </span>
                 <button id="closeModalBtn" aria-label="Tutup kartu" class="w-8 h-8 rounded-full bg-rose-50 hover:bg-rose-100 text-rose-500 flex items-center justify-center transition-colors cursor-pointer">
                     ✕
                 </button>
             </div>
 
-            <!-- Visual Gelombang Suara (Kesan setelah memencet tombol mic) -->
-            <div class="bg-gradient-to-r from-rose-50 via-pink-50 to-rose-50 border border-rose-200/80 rounded-2xl p-3 mb-5 flex items-center justify-center gap-3 shadow-inner">
-                <div class="w-9 h-9 rounded-full bg-rose-500 text-white flex items-center justify-center shadow-sm shrink-0">
-                    <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/>
-                        <path d="M19 10v2a7 7 0 0 1-14 0v-2" fill="none" stroke="currentColor" stroke-width="2"/>
-                    </svg>
-                </div>
-                <!-- Animasi Wave Bars -->
-                <div class="flex items-center gap-1 h-8">
-                    <div class="wave-bar" style="animation-delay: 0.1s"></div>
-                    <div class="wave-bar" style="animation-delay: 0.3s"></div>
-                    <div class="wave-bar" style="animation-delay: 0.5s"></div>
-                    <div class="wave-bar" style="animation-delay: 0.2s"></div>
-                    <div class="wave-bar" style="animation-delay: 0.6s"></div>
-                    <div class="wave-bar" style="animation-delay: 0.4s"></div>
-                    <div class="wave-bar" style="animation-delay: 0.15s"></div>
-                    <div class="wave-bar" style="animation-delay: 0.45s"></div>
-                    <div class="wave-bar" style="animation-delay: 0.25s"></div>
-                    <div class="wave-bar" style="animation-delay: 0.55s"></div>
-                </div>
-                <span class="text-xs font-bold text-rose-500 shrink-0">Untukmu ❤️</span>
-            </div>
+            <!-- SLIDE 1: Kalender Bulan Ini (November 2026) dengan Tanggal 15 Dilingkari -->
+            <div id="calendarStep1" class="relative flex flex-col items-center justify-center transition-all duration-300">
+                <!-- Kotak Kalender November 2026 -->
+                <div class="w-full bg-gradient-to-b from-rose-50/90 to-white border border-rose-200 rounded-2xl p-3.5 shadow-sm mb-4">
+                    <div class="flex items-center justify-between border-b border-rose-100 pb-2 mb-2.5">
+                        <span class="font-bold text-rose-600 text-sm tracking-wide">NOVEMBER 2026</span>
+                        <span class="text-xs font-semibold text-rose-400">🎂 Special Day</span>
+                    </div>
 
-            <!-- Area Konten Slide Mini di Dalam Kartu -->
-            <div id="slideContent" class="relative min-h-[175px] flex flex-col items-center justify-center transition-all duration-300">
-                <!-- Ikon/Emoji Besar -->
-                <div id="slideEmoji" class="text-5xl mb-3 transform transition-transform duration-300 hover:scale-110">
-                    🥰
+                    <!-- Nama Hari (1 Nov 2026 = Minggu) -->
+                    <div class="grid grid-cols-7 gap-1 text-[11px] font-bold text-rose-400 mb-1.5">
+                        <span>Min</span>
+                        <span>Sen</span>
+                        <span>Sel</span>
+                        <span>Rab</span>
+                        <span>Kam</span>
+                        <span>Jum</span>
+                        <span>Sab</span>
+                    </div>
+
+                    <!-- Grid Tanggal November 2026 (1 - 30) -->
+                    <div class="grid grid-cols-7 gap-1 text-xs font-semibold text-gray-700">
+                        <span class="py-1 rounded-lg">1</span>
+                        <span class="py-1 rounded-lg">2</span>
+                        <span class="py-1 rounded-lg">3</span>
+                        <span class="py-1 rounded-lg">4</span>
+                        <span class="py-1 rounded-lg">5</span>
+                        <span class="py-1 rounded-lg">6</span>
+                        <span class="py-1 rounded-lg">7</span>
+
+                        <span class="py-1 rounded-lg">8</span>
+                        <span class="py-1 rounded-lg">9</span>
+                        <span class="py-1 rounded-lg">10</span>
+                        <span class="py-1 rounded-lg">11</span>
+                        <span class="py-1 rounded-lg">12</span>
+                        <span class="py-1 rounded-lg">13</span>
+                        <span class="py-1 rounded-lg">14</span>
+
+                        <!-- Tanggal 15 Dilingkari -->
+                        <span class="relative flex items-center justify-center py-1 font-extrabold text-rose-600">
+                            <span class="w-7 h-7 rounded-full border-2 border-rose-500 bg-rose-100/90 flex items-center justify-center shadow-sm animate-pulse">
+                                15
+                            </span>
+                        </span>
+                        <span class="py-1 rounded-lg">16</span>
+                        <span class="py-1 rounded-lg">17</span>
+                        <span class="py-1 rounded-lg">18</span>
+                        <span class="py-1 rounded-lg">19</span>
+                        <span class="py-1 rounded-lg">20</span>
+                        <span class="py-1 rounded-lg">21</span>
+
+                        <span class="py-1 rounded-lg">22</span>
+                        <span class="py-1 rounded-lg">23</span>
+                        <span class="py-1 rounded-lg">24</span>
+                        <span class="py-1 rounded-lg">25</span>
+                        <span class="py-1 rounded-lg">26</span>
+                        <span class="py-1 rounded-lg">27</span>
+                        <span class="py-1 rounded-lg">28</span>
+
+                        <span class="py-1 rounded-lg">29</span>
+                        <span class="py-1 rounded-lg">30</span>
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>
                 </div>
-                <!-- Judul Slide -->
-                <h2 id="slideTitle" class="font-romantic text-2xl sm:text-3xl text-rose-600 mb-2">
-                    Hai Kesayangan Aku!
-                </h2>
-                <!-- Isi Pesan -->
-                <p id="slideText" class="text-gray-700 text-sm sm:text-base leading-relaxed font-medium px-1">
-                    Makasih ya udah pencet tombolnya. Aku cuma mau bilang kalau hari-hariku selalu jauh lebih indah sejak ada kamu di sampingku.
+
+                <!-- Teks di bawah kalender -->
+                <p class="text-rose-900 font-bold text-base sm:text-lg mb-2.5">
+                    hari ini adalah hari ulang tahunmu
                 </p>
+
+                <!-- Teks 'selanjutnya' berwarna hijau yang bisa dipencet -->
+                <button id="goToBlowingCalendarBtn" type="button" class="text-green-600 hover:text-green-700 active:scale-95 font-bold text-base underline decoration-2 underline-offset-4 cursor-pointer transition-all py-1 px-3 rounded-lg hover:bg-green-50">
+                    selanjutnya
+                </button>
             </div>
 
-            <!-- Indikator Titik (Dots) -->
-            <div id="slideDots" class="flex items-center justify-center gap-2 my-4">
-                <span class="w-2.5 h-2.5 rounded-full bg-rose-500 transition-all"></span>
-                <span class="w-2 h-2 rounded-full bg-rose-200 transition-all"></span>
-                <span class="w-2 h-2 rounded-full bg-rose-200 transition-all"></span>
-            </div>
+            <!-- SLIDE 2: Animasi Kalender Kertas Ketiup Angin (15 Nov 2008 -> 15 Nov 2026) -->
+            <div id="calendarStep2" class="hidden relative flex-col items-center justify-center transition-all duration-300">
+                
+                <!-- Area Tumpukan Kertas Kalender yang Terbang Ketiup Angin -->
+                <div class="relative w-52 h-44 mx-auto my-2 flex items-center justify-center">
+                    <!-- Kertas dasar di bagian paling bawah -->
+                    <div class="absolute inset-x-3 top-3 bottom-1 bg-rose-100/80 border border-rose-200 rounded-2xl transform -rotate-3 shadow-sm"></div>
+                    <div class="absolute inset-x-2 top-2 bottom-2 bg-pink-50 border border-rose-200 rounded-2xl transform rotate-2 shadow-sm"></div>
 
-            <!-- Tombol Navigasi Mini di Dalam Kartu -->
-            <div class="relative flex items-center justify-between gap-3 mt-2">
-                <button id="prevSlideBtn" class="flex-1 py-2.5 px-4 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-600 font-bold text-sm transition-all disabled:opacity-40 disabled:pointer-events-none cursor-pointer">
-                    ← Sebelumnya
-                </button>
-                <button id="nextSlideBtn" class="flex-1 py-2.5 px-4 rounded-xl bg-gradient-to-r from-rose-500 to-pink-500 hover:from-rose-600 hover:to-pink-600 text-white font-bold text-sm shadow-md shadow-rose-200 transition-all cursor-pointer">
-                    Lanjut →
-                </button>
+                    <!-- Kertas Utama (Berhenti di 15 November 2026) -->
+                    <div id="baseCalendarSheet" class="relative z-10 w-44 h-40 bg-white border-2 border-rose-300 rounded-2xl shadow-md overflow-hidden flex flex-col justify-between">
+                        <div class="bg-gradient-to-r from-rose-500 to-pink-500 text-white py-1.5 px-3 text-xs font-bold tracking-wider uppercase">
+                            NOVEMBER
+                        </div>
+                        <div class="flex-1 flex flex-col items-center justify-center px-2">
+                            <span id="baseCalDay" class="text-4xl font-extrabold text-rose-600 leading-none">15</span>
+                            <span id="baseCalYear" class="text-lg font-bold text-gray-700 mt-1">2008</span>
+                        </div>
+                        <div class="bg-rose-50 text-[10px] font-bold text-rose-400 py-1 border-t border-rose-100">
+                            🍃 Waktu terus berjalan...
+                        </div>
+                    </div>
+
+                    <!-- Layer tempat lembaran kertas kalender terbang ketiup angin -->
+                    <div id="flyingSheetsContainer" class="absolute inset-0 z-20 pointer-events-none flex items-center justify-center"></div>
+                </div>
+
+                <!-- Teks Hitungan Waktu Exact -->
+                <p class="mt-3 text-gray-800 text-sm sm:text-base leading-relaxed font-bold bg-rose-50/80 border border-rose-200/80 rounded-2xl p-3.5 shadow-inner">
+                    sudah 18 tahun 216 bulan 939 minggu 6.574 hari 157.776 jam 9.466.556 menit 567.993.600 detik
+                </p>
+
+                <!-- Tombol kecil untuk ulang animasi tiupan atau kembali -->
+                <div class="flex items-center justify-center gap-4 mt-3">
+                    <button id="backToCal1Btn" type="button" class="text-xs font-bold text-rose-500 hover:text-rose-700 cursor-pointer">
+                        ← Kembali
+                    </button>
+                    <button id="replayWindBtn" type="button" class="text-xs font-bold text-green-600 hover:text-green-700 cursor-pointer">
+                        🍃 Tiup lagi
+                    </button>
+                </div>
             </div>
 
         </div>
@@ -310,27 +412,6 @@
 
     <!-- Script Interaktif -->
     <script>
-        // ==========================================
-        // KUSTOMISASI PESAN DI SINI (MUDAH DIEDIT)
-        // ==========================================
-        const slidesData = [
-            {
-                emoji: "🥰",
-                title: "Hai Kesayangan Aku!",
-                text: "Makasih ya udah pencet tombolnya. Aku cuma mau bilang kalau hari-hariku selalu jauh lebih indah dan berwarna sejak ada kamu."
-            },
-            {
-                emoji: "✨",
-                title: "Kamu Itu Spesial",
-                text: "Jangan lupa jaga kesehatan, jangan telat makan, dan jangan terlalu capek ya. Kalau ada apa-apa, cerita sama aku oke?"
-            },
-            {
-                emoji: "💖",
-                title: "I Love You So Much!",
-                text: "Semoga senyum manis kamu hari ini nggak pernah hilang. Tap layar di mana aja buat munculin cinta dari aku! ❤️"
-            }
-        ];
-
         // Referensi Elemen DOM
         const powerMicBtn = document.getElementById('powerMicBtn');
         const frontCover = document.getElementById('frontCover');
@@ -339,22 +420,24 @@
         const closeModalBtn = document.getElementById('closeModalBtn');
 
         const slideCounter = document.getElementById('slideCounter');
-        const slideEmoji = document.getElementById('slideEmoji');
-        const slideTitle = document.getElementById('slideTitle');
-        const slideText = document.getElementById('slideText');
-        const slideContent = document.getElementById('slideContent');
-        const slideDots = document.getElementById('slideDots');
-        const prevSlideBtn = document.getElementById('prevSlideBtn');
-        const nextSlideBtn = document.getElementById('nextSlideBtn');
+        const calendarStep1 = document.getElementById('calendarStep1');
+        const calendarStep2 = document.getElementById('calendarStep2');
+        const goToBlowingCalendarBtn = document.getElementById('goToBlowingCalendarBtn');
+        const backToCal1Btn = document.getElementById('backToCal1Btn');
+        const replayWindBtn = document.getElementById('replayWindBtn');
 
-        let currentSlide = 0;
+        const baseCalendarSheet = document.getElementById('baseCalendarSheet');
+        const baseCalYear = document.getElementById('baseCalYear');
+        const flyingSheetsContainer = document.getElementById('flyingSheetsContainer');
 
-        // Fungsi memainkan nada lembut menggunakan Web Audio API (tanpa file mp3 eksternal)
+        let windTimers = [];
+
+        // Fungsi memainkan nada lembut menggunakan Web Audio API
         function playSweetChime() {
             try {
                 const AudioCtx = window.AudioContext || window.webkitAudioContext;
                 const ctx = new AudioCtx();
-                const notes = [523.25, 659.25, 783.99, 1046.50]; // Nada C5, E5, G5, C6
+                const notes = [523.25, 659.25, 783.99, 1046.50];
 
                 notes.forEach((freq, index) => {
                     const osc = ctx.createOscillator();
@@ -392,57 +475,94 @@
             }, 1200);
         }
 
-        // Render isi slide di dalam kartu melayang
-        function renderSlide(index) {
-            const data = slidesData[index];
-            
-            // Efek transisi halus saat ganti slide di dalam kartu
-            slideContent.style.opacity = '0';
-            slideContent.style.transform = 'translateY(8px)';
+        // Bersihkan timer animasi kertas terbang
+        function clearWindTimers() {
+            windTimers.forEach(t => clearTimeout(t));
+            windTimers = [];
+            flyingSheetsContainer.innerHTML = '';
+        }
 
-            setTimeout(() => {
-                slideCounter.textContent = `Pesan ${index + 1} / ${slidesData.length}`;
-                slideEmoji.textContent = data.emoji;
-                slideTitle.textContent = data.title;
-                slideText.textContent = data.text;
+        // Jalankan animasi kertas kalender terbang dari 15 November 2008 sampai 15 November 2026
+        function startCalendarWindAnimation() {
+            clearWindTimers();
+            const startYear = 2008;
+            const endYear = 2026;
+            const stepDelay = 130; // Kecepatan lembaran kertas terbang satu per satu
 
-                // Update tombol navigasi
-                prevSlideBtn.disabled = index === 0;
-                if (index === slidesData.length - 1) {
-                    nextSlideBtn.textContent = 'Kirim Cinta ❤️';
-                } else {
-                    nextSlideBtn.textContent = 'Lanjut →';
-                }
+            baseCalYear.textContent = startYear;
+            baseCalendarSheet.classList.remove('calendar-sheet-land');
 
-                // Update indikator titik
-                const dots = slideDots.children;
-                for (let i = 0; i < dots.length; i++) {
-                    if (i === index) {
-                        dots[i].className = 'w-4 h-2.5 rounded-full bg-rose-500 transition-all duration-300';
-                    } else {
-                        dots[i].className = 'w-2 h-2 rounded-full bg-rose-200 transition-all duration-300';
+            for (let year = startYear; year < endYear; year++) {
+                const index = year - startYear;
+                const timer = setTimeout(() => {
+                    // Update tahun di kertas bawahnya ke tahun berikutnya
+                    baseCalYear.textContent = year + 1;
+
+                    // Buat lembaran kertas kalender yang terlepas & terbang ketiup angin
+                    const sheet = document.createElement('div');
+                    sheet.className = 'calendar-sheet-fly absolute w-44 h-40 bg-white border-2 border-rose-300 rounded-2xl shadow-lg overflow-hidden flex flex-col justify-between';
+                    sheet.innerHTML = `
+                        <div class="bg-gradient-to-r from-rose-500 to-pink-500 text-white py-1.5 px-3 text-xs font-bold tracking-wider uppercase">
+                            NOVEMBER
+                        </div>
+                        <div class="flex-1 flex flex-col items-center justify-center px-2">
+                            <span class="text-4xl font-extrabold text-rose-600 leading-none">15</span>
+                            <span class="text-lg font-bold text-gray-700 mt-1">${year}</span>
+                        </div>
+                        <div class="bg-rose-50 text-[10px] font-bold text-rose-400 py-1 border-t border-rose-100">
+                            15 November ${year}
+                        </div>
+                    `;
+                    flyingSheetsContainer.appendChild(sheet);
+
+                    // Hapus elemen kertas setelah selesai terbang
+                    const cleanTimer = setTimeout(() => {
+                        sheet.remove();
+                    }, 450);
+                    windTimers.push(cleanTimer);
+
+                    // Saat mencapai 2026, beri efek mendarat manis
+                    if (year + 1 === endYear) {
+                        baseCalendarSheet.classList.add('calendar-sheet-land');
                     }
-                }
+                }, index * stepDelay);
 
-                slideContent.style.opacity = '1';
-                slideContent.style.transform = 'translateY(0)';
-            }, 160);
+                windTimers.push(timer);
+            }
+        }
+
+        // Tampilkan Slide 1 (Kalender November 2026 tgl 15 dilingkari)
+        function showCalendarStep1() {
+            clearWindTimers();
+            slideCounter.textContent = '15 November 2026';
+            calendarStep2.classList.add('hidden');
+            calendarStep2.classList.remove('flex');
+            calendarStep1.classList.remove('hidden');
+            calendarStep1.classList.add('flex');
+        }
+
+        // Tampilkan Slide 2 (Kalender ketiup angin 2008 -> 2026)
+        function showCalendarStep2() {
+            playSweetChime();
+            slideCounter.textContent = '2008 → 2026';
+            calendarStep1.classList.add('hidden');
+            calendarStep1.classList.remove('flex');
+            calendarStep2.classList.remove('hidden');
+            calendarStep2.classList.add('flex');
+            startCalendarWindAnimation();
         }
 
         // Buka kartu pop-up saat tombol power mic dipencet
         function openCard() {
             playSweetChime();
-            currentSlide = 0;
-            renderSlide(currentSlide);
+            showCalendarStep1();
 
-            // Sedikit mengecilkan elemen depan agar fokus ke kartu melayang, tapi tetap terlihat
             frontCover.style.transform = 'scale(0.92)';
             frontCover.style.opacity = '0.45';
 
             cardModal.classList.remove('modal-hidden');
             cardModal.classList.add('modal-visible');
 
-            // Ledakan hati kecil di sekitar tengah layar
             const centerX = window.innerWidth / 2;
             const centerY = window.innerHeight / 2;
             for (let i = 0; i < 6; i++) {
@@ -456,6 +576,7 @@
 
         // Tutup kartu pop-up dan kembali ke cover depan
         function closeCard() {
+            clearWindTimers();
             cardModal.classList.remove('modal-visible');
             cardModal.classList.add('modal-hidden');
 
@@ -472,30 +593,19 @@
         closeModalBtn.addEventListener('click', closeCard);
         modalBackdrop.addEventListener('click', closeCard);
 
-        prevSlideBtn.addEventListener('click', () => {
-            if (currentSlide > 0) {
-                currentSlide--;
-                renderSlide(currentSlide);
-            }
+        goToBlowingCalendarBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            showCalendarStep2();
         });
 
-        nextSlideBtn.addEventListener('click', (e) => {
-            if (currentSlide < slidesData.length - 1) {
-                currentSlide++;
-                renderSlide(currentSlide);
-            } else {
-                // Jika sudah di slide terakhir, munculkan banyak hati manis
-                playSweetChime();
-                const rect = nextSlideBtn.getBoundingClientRect();
-                for (let i = 0; i < 8; i++) {
-                    setTimeout(() => {
-                        spawnTapHeart(
-                            rect.left + Math.random() * rect.width,
-                            rect.top
-                        );
-                    }, i * 80);
-                }
-            }
+        backToCal1Btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            showCalendarStep1();
+        });
+
+        replayWindBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            startCalendarWindAnimation();
         });
 
         // Munculkan hati setiap kali pengguna tap layar di mana saja
