@@ -448,14 +448,13 @@
             <p class="inline-block text-xs sm:text-sm text-white font-semibold bg-purple-950/60 backdrop-blur-md px-4 py-1.5 rounded-full border border-white/20 shadow">
                 Selamat ulang tahun ke-18 sayang, semoga bahagia selalu menyertaimu ✨
             </p>
-            <!-- Tombol Hijau untuk langsung membuka video Full Screen -->
             <button id="openExtraWishBtn" type="button" class="bg-emerald-500 hover:bg-emerald-600 active:scale-95 text-white font-bold text-xs sm:text-sm px-4 py-2 rounded-full shadow-lg border border-emerald-300/40 cursor-pointer transition-all">
                 🎁 Klik Kejutan Spesial
             </button>
         </footer>
     </section>
 
-    <!-- ================= MODAL KARTU UCAPAN (SEBELUM VIDEO FULL SCREEN) ================= -->
+    <!-- ================= MODAL KARTU UCAPAN ================= -->
     <div id="extraWishModal" class="fixed inset-0 z-[120] flex items-center justify-center p-5 sm:p-8 modal-hidden">
         <div id="extraWishBackdrop" class="modal-backdrop fixed inset-0 bg-purple-950/50 backdrop-blur-sm"></div>
 
@@ -487,7 +486,6 @@
                     <button id="cancelExtraBtn" type="button" class="flex-1 py-2.5 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold text-sm cursor-pointer transition-all">
                         Tutup
                     </button>
-                    <!-- Tombol Hijau: Langsung buka video full screen beserta sound-nya -->
                     <button id="goToVideoFullscreenBtn" type="button" class="flex-1 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white font-bold text-sm shadow-md cursor-pointer transition-all">
                         Selanjutnya ✨
                     </button>
@@ -496,18 +494,17 @@
         </div>
     </div>
 
-    <!-- ================= PEMUTAR VIDEO FULL SCREEN (FULL LAYAR) ================= -->
+    <!-- ================= PEMUTAR VIDEO FULL SCREEN ================= -->
     <section id="fullscreenVideoSection" class="fixed inset-0 z-[150] hidden flex-col bg-black text-white overflow-hidden">
-        <!-- Tombol Kembali / Tutup Video di Pojok Kanan Atas -->
         <div class="absolute top-4 right-4 z-20">
             <button id="closeFullscreenVideoBtn" type="button" class="bg-white/20 hover:bg-white/40 backdrop-blur-md text-white font-bold px-4 py-2 rounded-full border border-white/30 transition-all cursor-pointer text-xs sm:text-sm">
                 ✕ Tutup Video
             </button>
         </div>
 
-        <!-- Elemen Video Full Layar -->
         <div class="relative w-full h-full flex items-center justify-center bg-black">
-            <video id="specialBirthdayVideo" src="video.mp4" controls autoplay preload="auto" class="w-full h-full object-contain">
+            <!-- Atribut playsinline ditambahkan agar aman di semua jenis HP -->
+            <video id="specialBirthdayVideo" src="video.mp4" controls autoplay playsinline preload="auto" class="w-full h-full object-contain">
                 Browser kamu tidak mendukung pemutaran video.
             </video>
         </div>
@@ -585,8 +582,6 @@
 
             let windTimers = [];
             let isMuted = false;
-            let synthInterval = null;
-            let synthCtx = null;
 
             function buildWisteriaPetals() {
                 if (!wisteriaPetalsLayer) return;
@@ -932,7 +927,6 @@
                 });
             }
 
-            // Membuka modal ucapan
             if (openExtraWishBtn) {
                 openExtraWishBtn.addEventListener('click', (e) => {
                     e.stopPropagation();
@@ -965,29 +959,25 @@
                 extraWishBackdrop.addEventListener('click', closeExtraModal);
             }
 
-            // Tombol "Selanjutnya ✨" dipencet -> Sembunyikan musik latar, lalu buka Video Full Screen & putar suaranya
             if (goToVideoFullscreenBtn) {
                 goToVideoFullscreenBtn.addEventListener('click', (e) => {
                     e.stopPropagation();
                     playSweetChime();
                     closeExtraModal();
 
-                    // Pause musik latar bioskop agar suara video terdengar jelas
                     if (bgMusicAudio) bgMusicAudio.pause();
 
-                    // Tampilkan layar video full screen
                     fullscreenVideoSection.classList.remove('hidden');
                     fullscreenVideoSection.classList.add('flex');
 
                     if (specialBirthdayVideo) {
-                        specialBirthdayVideo.muted = false; // Memastikan sound video menyala
+                        specialBirthdayVideo.muted = false;
                         specialBirthdayVideo.currentTime = 0;
                         specialBirthdayVideo.play().catch(() => {});
                     }
                 });
             }
 
-            // Tombol Tutup Video Fullscreen
             if (closeFullscreenVideoBtn) {
                 closeFullscreenVideoBtn.addEventListener('click', (e) => {
                     e.stopPropagation();
@@ -996,7 +986,6 @@
                     fullscreenVideoSection.classList.add('hidden');
                     fullscreenVideoSection.classList.remove('flex');
 
-                    // Nyalakan kembali musik latar bioskop
                     if (bgMusicAudio && !isMuted) {
                         bgMusicAudio.play().catch(() => {});
                     }
