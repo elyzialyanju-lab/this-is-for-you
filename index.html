@@ -143,40 +143,73 @@
             animation: flyUpHeart 1.2s ease-out forwards;
         }
 
-        /* Animasi kertas kalender ketiup angin dari 2008 ke 2026 */
-        @keyframes paperBlowAway {
+        /* Animasi kertas kalender sobek dari jepitan ATAS lalu melayang ketiup angin (2008 -> 2026) */
+        @keyframes paperBlowFromTop {
             0% {
                 opacity: 1;
-                transform: translate(0, 0) rotate(0deg) scale(1);
+                transform: translateY(0) rotateX(0deg) scale(1);
             }
             35% {
-                opacity: 0.95;
-                transform: translate(28px, -18px) rotate(10deg) skewX(-6deg) scale(1.03);
+                opacity: 0.96;
+                transform: translateY(-22px) rotateX(28deg) scale(1.02);
             }
             100% {
                 opacity: 0;
-                transform: translate(190px, -115px) rotate(36deg) skewX(-18deg) scale(0.72);
+                transform: translateY(-175px) rotateX(68deg) scale(0.84);
             }
         }
 
         @keyframes paperSettleIn {
             0% {
                 opacity: 0;
-                transform: translate(-24px, 14px) rotate(-6deg) scale(0.92);
+                transform: translateY(-14px) scale(0.95);
             }
             100% {
                 opacity: 1;
-                transform: translate(0, 0) rotate(0deg) scale(1);
+                transform: translateY(0) scale(1);
             }
         }
 
         .calendar-sheet-fly {
-            animation: paperBlowAway 0.42s cubic-bezier(0.25, 0.8, 0.5, 1) forwards;
-            transform-origin: bottom left;
+            animation: paperBlowFromTop 0.42s cubic-bezier(0.25, 0.8, 0.5, 1) forwards;
+            transform-origin: top center;
         }
 
         .calendar-sheet-land {
             animation: paperSettleIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
+
+        /* Animasi Slide Bioskop / Filmstrip Scroll ke Atas Terus-Menerus */
+        @keyframes cinemaScrollUp {
+            0% {
+                transform: translateY(0);
+            }
+            100% {
+                transform: translateY(-50%);
+            }
+        }
+
+        .cinema-track {
+            animation: cinemaScrollUp 26s linear infinite;
+            will-change: transform;
+        }
+
+        .cinema-track:hover,
+        .cinema-track:active {
+            animation-play-state: paused;
+        }
+
+        /* Lubang klise film di sisi kiri dan kanan */
+        .film-sprockets {
+            background-image: repeating-linear-gradient(
+                to bottom,
+                transparent 0px,
+                transparent 14px,
+                rgba(255, 255, 255, 0.22) 14px,
+                rgba(255, 255, 255, 0.22) 26px,
+                transparent 26px,
+                transparent 40px
+            );
         }
     </style>
 </head>
@@ -392,12 +425,17 @@
                     sudah 18 tahun 216 bulan 939 minggu 6.574 hari 157.776 jam 9.466.556 menit 567.993.600 detik
                 </p>
 
+                <!-- Tombol Teks Hijau 'selanjutnya' menuju layar bioskop full screen -->
+                <button id="goToCinemaBtn" type="button" class="mt-2.5 text-green-600 hover:text-green-700 active:scale-95 font-bold text-base underline decoration-2 underline-offset-4 cursor-pointer transition-all py-1.5 px-4 rounded-lg hover:bg-green-50">
+                    selanjutnya
+                </button>
+
                 <!-- Tombol kecil untuk ulang animasi tiupan atau kembali -->
-                <div class="flex items-center justify-center gap-4 mt-3">
+                <div class="flex items-center justify-center gap-4 mt-1">
                     <button id="backToCal1Btn" type="button" class="text-xs font-bold text-rose-500 hover:text-rose-700 cursor-pointer py-1 px-2">
                         ← Kembali
                     </button>
-                    <button id="replayWindBtn" type="button" class="text-xs font-bold text-green-600 hover:text-green-700 cursor-pointer py-1 px-2">
+                    <button id="replayWindBtn" type="button" class="text-xs font-bold text-rose-400 hover:text-rose-600 cursor-pointer py-1 px-2">
                         🍃 Tiup lagi
                     </button>
                 </div>
@@ -406,9 +444,93 @@
         </div>
     </div>
 
+    <!-- ================= LAYAR PENUH BIOSKOP KENANGAN (FULL SCREEN) ================= -->
+    <section id="cinemaScreen" class="fixed inset-0 z-50 hidden flex-col bg-gradient-to-b from-stone-950 via-rose-950 to-stone-950 text-white overflow-hidden">
+        
+        <!-- Efek cahaya proyektor bioskop lembut -->
+        <div class="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_top,rgba(244,63,94,0.22),transparent_65%)]"></div>
+
+        <!-- Audio HTML5 (Ganti 'lagu.mp3' dengan file lagu di repo GitHub kamu; otomatis fallback ke melodi piano lembut jika file belum ada) -->
+        <audio id="bgMusicAudio" src="lagu.mp3" loop preload="auto"></audio>
+
+        <!-- Header Mengambang di Atas Layar Bioskop -->
+        <header class="relative z-20 flex items-center justify-between px-4 sm:px-8 py-4 bg-gradient-to-b from-black/85 via-black/50 to-transparent">
+            <button id="backFromCinemaBtn" type="button" class="inline-flex items-center gap-1.5 text-xs sm:text-sm font-bold text-rose-200 hover:text-white bg-white/10 hover:bg-white/20 backdrop-blur-md px-3.5 py-2 rounded-full border border-white/15 transition-all cursor-pointer">
+                <span>←</span>
+                <span>Kembali</span>
+            </button>
+
+            <div class="text-center">
+                <span class="text-[11px] uppercase tracking-[0.25em] text-rose-300/90 font-bold block">Now Showing</span>
+                <h2 class="text-sm sm:text-base font-bold text-white">Happy 18th Birthday ❤️</h2>
+            </div>
+
+            <!-- Tombol Mute / Unmute Musik -->
+            <button id="toggleMusicBtn" type="button" aria-label="Suara musik" class="inline-flex items-center gap-1.5 text-xs sm:text-sm font-bold text-rose-100 bg-rose-600/80 hover:bg-rose-500 backdrop-blur-md px-3.5 py-2 rounded-full border border-rose-300/30 shadow-lg transition-all cursor-pointer">
+                <span id="musicIcon">🔊</span>
+                <span id="musicLabel" class="hidden sm:inline">Musik Nyala</span>
+            </button>
+        </header>
+
+        <!-- Area Gulungan Filmstrip Bioskop Vertikal (Infinite Scroll ke Atas) -->
+        <div class="relative flex-1 w-full max-w-md mx-auto overflow-hidden px-6 sm:px-10">
+            <!-- Bingkai klise film kiri & kanan -->
+            <div class="film-sprockets absolute left-1.5 sm:left-3 top-0 bottom-0 w-3 sm:w-4 pointer-events-none z-10"></div>
+            <div class="film-sprockets absolute right-1.5 sm:right-3 top-0 bottom-0 w-3 sm:w-4 pointer-events-none z-10"></div>
+
+            <!-- Gradasi pudar atas & bawah agar gulungan terlihat mulus seperti layar bioskop -->
+            <div class="absolute top-0 inset-x-0 h-16 bg-gradient-to-b from-stone-950 to-transparent z-10 pointer-events-none"></div>
+            <div class="absolute bottom-0 inset-x-0 h-20 bg-gradient-to-t from-stone-950 to-transparent z-10 pointer-events-none"></div>
+
+            <!-- Track Foto yang Bergerak ke Atas Terus-Menerus -->
+            <div id="cinemaTrack" class="cinema-track flex flex-col gap-6 py-6">
+                <!-- Item foto akan diisi otomatis oleh JavaScript & diduplikasi agar loop mulus tanpa putus -->
+            </div>
+        </div>
+
+        <!-- Footer Ucapan Hangat di Bawah -->
+        <footer class="relative z-20 text-center px-4 py-3.5 bg-gradient-to-t from-black/90 via-black/60 to-transparent">
+            <p class="text-xs sm:text-sm text-rose-200 font-semibold">
+                Selamat ulang tahun ke-18 sayang, semoga bahagia selalu menyertaimu ✨
+            </p>
+        </footer>
+    </section>
+
     <!-- Script Interaktif -->
     <script>
         document.addEventListener('DOMContentLoaded', () => {
+            // =========================================================================
+            // PENGATURAN FOTO SLIDE BIOSKOP (Ganti 'src' dengan nama file foto di GitHub)
+            // Contoh: taruh foto1.jpg, foto2.jpg, foto3.jpg sejajar dengan index.html
+            // =========================================================================
+            const cinemaPhotos = [
+                {
+                    src: 'foto1.jpg',
+                    fallback: 'https://placehold.co/600x750/881337/ffe4e6?text=Foto+1+(foto1.jpg)',
+                    caption: '15 November 2008 — Awal dari cerita indahmu ✨'
+                },
+                {
+                    src: 'foto2.jpg',
+                    fallback: 'https://placehold.co/600x750/9f1239/ffe4e6?text=Foto+2+(foto2.jpg)',
+                    caption: 'Senyum favoritku yang selalu bikin hari lebih hangat 🌸'
+                },
+                {
+                    src: 'foto3.jpg',
+                    fallback: 'https://placehold.co/600x750/be123c/ffe4e6?text=Foto+3+(foto3.jpg)',
+                    caption: 'Setiap momen bareng kamu selalu jadi kenangan terbaik 💕'
+                },
+                {
+                    src: 'foto4.jpg',
+                    fallback: 'https://placehold.co/600x750/881337/ffe4e6?text=Foto+4+(foto4.jpg)',
+                    caption: 'Selamat bertumbuh & bersinar di usia 18 tahun 🎂'
+                },
+                {
+                    src: 'foto5.jpg',
+                    fallback: 'https://placehold.co/600x750/9f1239/ffe4e6?text=Foto+5+(foto5.jpg)',
+                    caption: '15 November 2026 — Happy Birthday, Sayang! ❤️'
+                }
+            ];
+
             // Referensi Elemen DOM
             const powerMicBtn = document.getElementById('powerMicBtn');
             const frontCover = document.getElementById('frontCover');
@@ -420,6 +542,7 @@
             const calendarStep1 = document.getElementById('calendarStep1');
             const calendarStep2 = document.getElementById('calendarStep2');
             const goToBlowingCalendarBtn = document.getElementById('goToBlowingCalendarBtn');
+            const goToCinemaBtn = document.getElementById('goToCinemaBtn');
             const backToCal1Btn = document.getElementById('backToCal1Btn');
             const replayWindBtn = document.getElementById('replayWindBtn');
 
@@ -427,7 +550,148 @@
             const baseCalYear = document.getElementById('baseCalYear');
             const flyingSheetsContainer = document.getElementById('flyingSheetsContainer');
 
+            // Referensi Elemen Layar Bioskop & Audio
+            const cinemaScreen = document.getElementById('cinemaScreen');
+            const cinemaTrack = document.getElementById('cinemaTrack');
+            const backFromCinemaBtn = document.getElementById('backFromCinemaBtn');
+            const toggleMusicBtn = document.getElementById('toggleMusicBtn');
+            const musicIcon = document.getElementById('musicIcon');
+            const musicLabel = document.getElementById('musicLabel');
+            const bgMusicAudio = document.getElementById('bgMusicAudio');
+
             let windTimers = [];
+            let isMuted = false;
+            let synthInterval = null;
+            let synthCtx = null;
+
+            // Bangun daftar kartu foto filmstrip bioskop (diduplikasi 2x untuk infinite scroll mulus)
+            function buildCinemaFilmstrip() {
+                if (!cinemaTrack) return;
+                const allSlides = [...cinemaPhotos, ...cinemaPhotos];
+                cinemaTrack.innerHTML = allSlides.map((item, idx) => {
+                    const frameNumber = (idx % cinemaPhotos.length) + 1;
+                    return `
+                        <article class="bg-stone-900/95 border-2 border-rose-200/25 rounded-2xl p-3 shadow-2xl">
+                            <div class="flex items-center justify-between text-[10px] font-mono text-rose-300/75 mb-2 px-1">
+                                <span>SCENE 0${frameNumber}</span>
+                                <span>15 • 11 • 2026</span>
+                            </div>
+                            <div class="relative aspect-[4/5] w-full overflow-hidden rounded-xl bg-stone-800">
+                                <img
+                                    src="${item.src}"
+                                    onerror="this.onerror=null;this.src='${item.fallback}';"
+                                    alt="Kenangan ${frameNumber}"
+                                    class="w-full h-full object-cover"
+                                />
+                            </div>
+                            <p class="mt-2.5 text-center text-xs sm:text-sm font-semibold text-rose-100 px-1 leading-snug">
+                                ${item.caption}
+                            </p>
+                        </article>
+                    `;
+                }).join('');
+            }
+
+            buildCinemaFilmstrip();
+
+            // Melodi piano/music-box lembut otomatis (jika lagu.mp3 belum diupload ke GitHub)
+            function startFallbackMusicBox() {
+                stopFallbackMusicBox();
+                try {
+                    const AudioCtx = window.AudioContext || window.webkitAudioContext;
+                    if (!AudioCtx) return;
+                    synthCtx = new AudioCtx();
+                    if (synthCtx.state === 'suspended') {
+                        synthCtx.resume();
+                    }
+
+                    // Melodi "Happy Birthday" lembut bergaya kotak musik
+                    const melody = [
+                        { f: 261.63, d: 0.4 }, { f: 261.63, d: 0.4 }, { f: 293.66, d: 0.8 }, { f: 261.63, d: 0.8 }, { f: 349.23, d: 0.8 }, { f: 329.63, d: 1.4 },
+                        { f: 261.63, d: 0.4 }, { f: 261.63, d: 0.4 }, { f: 293.66, d: 0.8 }, { f: 261.63, d: 0.8 }, { f: 392.00, d: 0.8 }, { f: 349.23, d: 1.4 },
+                        { f: 261.63, d: 0.4 }, { f: 261.63, d: 0.4 }, { f: 523.25, d: 0.8 }, { f: 440.00, d: 0.8 }, { f: 349.23, d: 0.8 }, { f: 329.63, d: 0.8 }, { f: 293.66, d: 1.4 },
+                        { f: 466.16, d: 0.4 }, { f: 466.16, d: 0.4 }, { f: 440.00, d: 0.8 }, { f: 349.23, d: 0.8 }, { f: 392.00, d: 0.8 }, { f: 349.23, d: 1.5 }
+                    ];
+
+                    let step = 0;
+                    const playStep = () => {
+                        if (isMuted || !synthCtx) return;
+                        const note = melody[step % melody.length];
+                        const now = synthCtx.currentTime;
+
+                        const osc = synthCtx.createOscillator();
+                        const gain = synthCtx.createGain();
+                        osc.type = 'sine';
+                        osc.frequency.setValueAtTime(note.f, now);
+
+                        gain.gain.setValueAtTime(0.001, now);
+                        gain.gain.exponentialRampToValueAtTime(0.11, now + 0.04);
+                        gain.gain.exponentialRampToValueAtTime(0.0001, now + note.d + 0.35);
+
+                        osc.connect(gain);
+                        gain.connect(synthCtx.destination);
+                        osc.start(now);
+                        osc.stop(now + note.d + 0.4);
+
+                        step++;
+                        synthInterval = setTimeout(playStep, note.d * 560);
+                    };
+
+                    playStep();
+                } catch (e) {
+                    // Abaikan jika audio dibatasi perangkat
+                }
+            }
+
+            function stopFallbackMusicBox() {
+                if (synthInterval) {
+                    clearTimeout(synthInterval);
+                    synthInterval = null;
+                }
+                if (synthCtx) {
+                    try { synthCtx.close(); } catch (e) {}
+                    synthCtx = null;
+                }
+            }
+
+            // Mulai musik latar (coba file lagu.mp3 terlebih dahulu, lalu fallback ke kotak musik)
+            function startBackgroundMusic() {
+                isMuted = false;
+                updateMusicButtonUI();
+
+                if (bgMusicAudio) {
+                    bgMusicAudio.muted = false;
+                    bgMusicAudio.volume = 0.85;
+                    const playPromise = bgMusicAudio.play();
+                    if (playPromise !== undefined) {
+                        playPromise.catch(() => {
+                            // Jika lagu.mp3 belum ditaruh di repo GitHub, putar melodi kotak musik otomatis
+                            startFallbackMusicBox();
+                        });
+                    }
+                } else {
+                    startFallbackMusicBox();
+                }
+            }
+
+            function stopBackgroundMusic() {
+                if (bgMusicAudio) {
+                    bgMusicAudio.pause();
+                    bgMusicAudio.currentTime = 0;
+                }
+                stopFallbackMusicBox();
+            }
+
+            function updateMusicButtonUI() {
+                if (!musicIcon || !musicLabel) return;
+                if (isMuted) {
+                    musicIcon.textContent = '🔇';
+                    musicLabel.textContent = 'Musik Mati';
+                } else {
+                    musicIcon.textContent = '🔊';
+                    musicLabel.textContent = 'Musik Nyala';
+                }
+            }
 
             // Fungsi memainkan nada lembut menggunakan Web Audio API
             function playSweetChime() {
@@ -486,7 +750,7 @@
                 }
             }
 
-            // Jalankan animasi kertas kalender terbang dari 15 November 2008 sampai 15 November 2026
+            // Jalankan animasi kertas kalender sobek/ketiup dari ATAS (15 November 2008 -> 15 November 2026)
             function startCalendarWindAnimation() {
                 clearWindTimers();
                 const startYear = 2008;
@@ -552,6 +816,28 @@
                 startCalendarWindAnimation();
             }
 
+            // Buka Layar Penuh Bioskop Kenangan + Putar Lagu Otomatis
+            function openCinemaScreen() {
+                clearWindTimers();
+                cardModal.classList.remove('modal-visible');
+                cardModal.classList.add('modal-hidden');
+
+                cinemaScreen.classList.remove('hidden');
+                cinemaScreen.classList.add('flex');
+
+                startBackgroundMusic();
+            }
+
+            // Tutup Layar Penuh Bioskop Kenangan dan kembali ke kartu kalender
+            function closeCinemaScreen() {
+                stopBackgroundMusic();
+                cinemaScreen.classList.add('hidden');
+                cinemaScreen.classList.remove('flex');
+
+                cardModal.classList.remove('modal-hidden');
+                cardModal.classList.add('modal-visible');
+            }
+
             // Buka kartu pop-up saat tombol power mic dipencet
             function openCard() {
                 playSweetChime();
@@ -577,6 +863,7 @@
             // Tutup kartu pop-up dan kembali ke cover depan
             function closeCard() {
                 clearWindTimers();
+                stopBackgroundMusic();
                 cardModal.classList.remove('modal-visible');
                 cardModal.classList.add('modal-hidden');
 
@@ -608,6 +895,39 @@
                 goToBlowingCalendarBtn.addEventListener('click', (e) => {
                     e.stopPropagation();
                     showCalendarStep2();
+                });
+            }
+
+            if (goToCinemaBtn) {
+                goToCinemaBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    openCinemaScreen();
+                });
+            }
+
+            if (backFromCinemaBtn) {
+                backFromCinemaBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    closeCinemaScreen();
+                });
+            }
+
+            if (toggleMusicBtn) {
+                toggleMusicBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    isMuted = !isMuted;
+                    updateMusicButtonUI();
+
+                    if (isMuted) {
+                        if (bgMusicAudio) bgMusicAudio.muted = true;
+                        stopFallbackMusicBox();
+                    } else {
+                        if (bgMusicAudio && !bgMusicAudio.paused) {
+                            bgMusicAudio.muted = false;
+                        } else {
+                            startBackgroundMusic();
+                        }
+                    }
                 });
             }
 
