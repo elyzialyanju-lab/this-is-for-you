@@ -179,18 +179,53 @@
             animation: paperSettleIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
         }
 
-        /* Animasi Slide Bioskop / Filmstrip Scroll ke Atas Terus-Menerus */
-        @keyframes cinemaScrollUp {
+        /* Animasi Slide Bioskop / Filmstrip Hitam Mengalir Miring dari Kiri Bawah ke Kanan Atas */
+        @keyframes cinemaDiagonalFlow {
             0% {
-                transform: translateY(0);
+                transform: translate3d(0, 0, 0);
             }
             100% {
-                transform: translateY(-50%);
+                transform: translate3d(-50%, 0, 0);
             }
         }
 
+        .cinema-diagonal-wrapper {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 240vmax;
+            transform: translate(-50%, -50%) rotate(-32deg);
+            transform-origin: center center;
+            z-index: 10;
+        }
+
+        .cinema-black-reel {
+            background: #09090b;
+            border-top: 4px solid #18181b;
+            border-bottom: 4px solid #18181b;
+            box-shadow: 0 25px 60px rgba(30, 10, 45, 0.45), 0 0 0 1px rgba(255, 255, 255, 0.08);
+        }
+
+        /* Lubang klise film horizontal di tepi atas dan bawah gulungan hitam */
+        .film-sprockets-horizontal {
+            height: 20px;
+            width: 100%;
+            background-image: repeating-linear-gradient(
+                to right,
+                transparent 0px,
+                transparent 12px,
+                rgba(244, 244, 245, 0.78) 12px,
+                rgba(244, 244, 245, 0.78) 26px,
+                transparent 26px,
+                transparent 40px
+            );
+        }
+
         .cinema-track {
-            animation: cinemaScrollUp 26s linear infinite;
+            display: flex;
+            flex-direction: row;
+            width: max-content;
+            animation: cinemaDiagonalFlow 28s linear infinite;
             will-change: transform;
         }
 
@@ -199,17 +234,47 @@
             animation-play-state: paused;
         }
 
-        /* Lubang klise film di sisi kiri dan kanan */
-        .film-sprockets {
-            background-image: repeating-linear-gradient(
-                to bottom,
-                transparent 0px,
-                transparent 14px,
-                rgba(255, 255, 255, 0.22) 14px,
-                rgba(255, 255, 255, 0.22) 26px,
-                transparent 26px,
-                transparent 40px
-            );
+        /* Animasi kelopak bunga wisteria berguguran perlahan */
+        @keyframes wisteriaFall {
+            0% {
+                transform: translate3d(0, -10vh, 0) rotate(0deg) scale(0.9);
+                opacity: 0;
+            }
+            12% {
+                opacity: 0.9;
+            }
+            50% {
+                transform: translate3d(35px, 48vh, 0) rotate(180deg) scale(1);
+            }
+            88% {
+                opacity: 0.85;
+            }
+            100% {
+                transform: translate3d(-25px, 110vh, 0) rotate(360deg) scale(0.85);
+                opacity: 0;
+            }
+        }
+
+        @keyframes wisteriaSway {
+            0%, 100% {
+                transform: rotate(-2.5deg);
+            }
+            50% {
+                transform: rotate(2.5deg);
+            }
+        }
+
+        .wisteria-vine {
+            transform-origin: top center;
+            animation: wisteriaSway 5.5s ease-in-out infinite;
+        }
+
+        .wisteria-petal {
+            position: absolute;
+            top: -40px;
+            border-radius: 75% 15% 75% 15%;
+            pointer-events: none;
+            animation: wisteriaFall linear infinite;
         }
     </style>
 </head>
@@ -445,52 +510,124 @@
     </div>
 
     <!-- ================= LAYAR PENUH BIOSKOP KENANGAN (FULL SCREEN) ================= -->
-    <section id="cinemaScreen" class="fixed inset-0 z-50 hidden flex-col bg-gradient-to-b from-stone-950 via-rose-950 to-stone-950 text-white overflow-hidden">
+    <section id="cinemaScreen" class="fixed inset-0 z-50 hidden flex-col bg-gradient-to-br from-purple-100 via-fuchsia-100 to-rose-100 text-purple-950 overflow-hidden">
         
-        <!-- Efek cahaya proyektor bioskop lembut -->
-        <div class="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_top,rgba(244,63,94,0.22),transparent_65%)]"></div>
+        <!-- Latar Belakang Bunga Wisteria Menjuntai dari Atas & Kelopak Berguguran -->
+        <div id="wisteriaBackdrop" class="absolute inset-0 pointer-events-none overflow-hidden z-0">
+            <!-- Cahaya lembut latar belakang wisteria -->
+            <div class="absolute -top-24 left-1/4 w-96 h-96 bg-purple-300/40 rounded-full blur-3xl"></div>
+            <div class="absolute bottom-0 right-1/4 w-96 h-96 bg-pink-300/40 rounded-full blur-3xl"></div>
+
+            <!-- Untaian Bunga Wisteria Menjuntai di Bagian Atas Layar -->
+            <div class="absolute top-0 inset-x-0 flex justify-around items-start opacity-90">
+                <!-- Untaian 1 -->
+                <svg class="wisteria-vine w-24 sm:w-32 h-56 sm:h-72 -mt-2" viewBox="0 0 120 280" fill="none">
+                    <path d="M60 0 Q55 90 62 240" stroke="#7e22ce" stroke-width="2.5" stroke-opacity="0.45"/>
+                    <ellipse cx="48" cy="36" rx="14" ry="18" fill="#a855f7" fill-opacity="0.75"/>
+                    <ellipse cx="72" cy="44" rx="14" ry="18" fill="#c084fc" fill-opacity="0.85"/>
+                    <ellipse cx="44" cy="70" rx="13" ry="17" fill="#d946ef" fill-opacity="0.65"/>
+                    <ellipse cx="74" cy="78" rx="13" ry="17" fill="#a855f7" fill-opacity="0.8"/>
+                    <ellipse cx="50" cy="106" rx="12" ry="16" fill="#e879f9" fill-opacity="0.8"/>
+                    <ellipse cx="70" cy="116" rx="12" ry="16" fill="#9333ea" fill-opacity="0.75"/>
+                    <ellipse cx="52" cy="142" rx="11" ry="15" fill="#c084fc" fill-opacity="0.85"/>
+                    <ellipse cx="68" cy="154" rx="10" ry="14" fill="#f0abfc" fill-opacity="0.9"/>
+                    <ellipse cx="55" cy="180" rx="9" ry="13" fill="#a855f7" fill-opacity="0.8"/>
+                    <ellipse cx="64" cy="195" rx="8" ry="12" fill="#e879f9" fill-opacity="0.85"/>
+                    <ellipse cx="60" cy="222" rx="7" ry="11" fill="#c084fc" fill-opacity="0.9"/>
+                </svg>
+
+                <!-- Untaian 2 -->
+                <svg class="wisteria-vine w-28 sm:w-36 h-64 sm:h-80 -mt-2" style="animation-delay: 1.2s;" viewBox="0 0 120 280" fill="none">
+                    <path d="M60 0 Q66 100 58 255" stroke="#6b21a8" stroke-width="2.5" stroke-opacity="0.4"/>
+                    <ellipse cx="46" cy="32" rx="15" ry="19" fill="#9333ea" fill-opacity="0.75"/>
+                    <ellipse cx="74" cy="40" rx="15" ry="19" fill="#d946ef" fill-opacity="0.65"/>
+                    <ellipse cx="45" cy="68" rx="14" ry="18" fill="#c084fc" fill-opacity="0.85"/>
+                    <ellipse cx="73" cy="76" rx="14" ry="18" fill="#a855f7" fill-opacity="0.8"/>
+                    <ellipse cx="48" cy="104" rx="13" ry="17" fill="#f0abfc" fill-opacity="0.85"/>
+                    <ellipse cx="71" cy="114" rx="13" ry="17" fill="#9333ea" fill-opacity="0.75"/>
+                    <ellipse cx="50" cy="142" rx="11" ry="15" fill="#c084fc" fill-opacity="0.85"/>
+                    <ellipse cx="69" cy="154" rx="11" ry="15" fill="#e879f9" fill-opacity="0.85"/>
+                    <ellipse cx="54" cy="182" rx="9" ry="13" fill="#a855f7" fill-opacity="0.8"/>
+                    <ellipse cx="65" cy="198" rx="8" ry="12" fill="#f5d0fe" fill-opacity="0.95"/>
+                    <ellipse cx="59" cy="228" rx="7" ry="11" fill="#c084fc" fill-opacity="0.9"/>
+                </svg>
+
+                <!-- Untaian 3 -->
+                <svg class="wisteria-vine hidden sm:block w-28 h-64 -mt-2" style="animation-delay: 2.1s;" viewBox="0 0 120 280" fill="none">
+                    <path d="M60 0 Q54 95 61 245" stroke="#7e22ce" stroke-width="2.5" stroke-opacity="0.4"/>
+                    <ellipse cx="48" cy="36" rx="14" ry="18" fill="#c084fc" fill-opacity="0.8"/>
+                    <ellipse cx="72" cy="44" rx="14" ry="18" fill="#a855f7" fill-opacity="0.75"/>
+                    <ellipse cx="46" cy="74" rx="13" ry="17" fill="#e879f9" fill-opacity="0.75"/>
+                    <ellipse cx="72" cy="82" rx="13" ry="17" fill="#9333ea" fill-opacity="0.75"/>
+                    <ellipse cx="50" cy="112" rx="12" ry="16" fill="#c084fc" fill-opacity="0.85"/>
+                    <ellipse cx="68" cy="124" rx="11" ry="15" fill="#f0abfc" fill-opacity="0.85"/>
+                    <ellipse cx="54" cy="156" rx="10" ry="14" fill="#a855f7" fill-opacity="0.8"/>
+                    <ellipse cx="64" cy="174" rx="8" ry="12" fill="#e879f9" fill-opacity="0.85"/>
+                    <ellipse cx="60" cy="204" rx="7" ry="11" fill="#c084fc" fill-opacity="0.9"/>
+                </svg>
+
+                <!-- Untaian 4 -->
+                <svg class="wisteria-vine w-24 sm:w-32 h-56 sm:h-72 -mt-2" style="animation-delay: 0.7s;" viewBox="0 0 120 280" fill="none">
+                    <path d="M60 0 Q64 90 59 240" stroke="#7e22ce" stroke-width="2.5" stroke-opacity="0.45"/>
+                    <ellipse cx="48" cy="36" rx="14" ry="18" fill="#a855f7" fill-opacity="0.75"/>
+                    <ellipse cx="72" cy="44" rx="14" ry="18" fill="#e879f9" fill-opacity="0.8"/>
+                    <ellipse cx="45" cy="72" rx="13" ry="17" fill="#c084fc" fill-opacity="0.85"/>
+                    <ellipse cx="73" cy="80" rx="13" ry="17" fill="#9333ea" fill-opacity="0.75"/>
+                    <ellipse cx="50" cy="108" rx="12" ry="16" fill="#f0abfc" fill-opacity="0.85"/>
+                    <ellipse cx="69" cy="120" rx="11" ry="15" fill="#a855f7" fill-opacity="0.8"/>
+                    <ellipse cx="53" cy="150" rx="10" ry="14" fill="#c084fc" fill-opacity="0.85"/>
+                    <ellipse cx="66" cy="166" rx="9" ry="13" fill="#e879f9" fill-opacity="0.85"/>
+                    <ellipse cx="58" cy="198" rx="7" ry="11" fill="#9333ea" fill-opacity="0.8"/>
+                </svg>
+            </div>
+
+            <!-- Layer Kelopak Wisteria Berguguran Perlahan -->
+            <div id="wisteriaPetalsLayer" class="absolute inset-0 pointer-events-none"></div>
+        </div>
 
         <!-- Audio HTML5 (Ganti 'lagu.mp3' dengan file lagu di repo GitHub kamu; otomatis fallback ke melodi piano lembut jika file belum ada) -->
         <audio id="bgMusicAudio" src="lagu.mp3" loop preload="auto"></audio>
 
         <!-- Header Mengambang di Atas Layar Bioskop -->
-        <header class="relative z-20 flex items-center justify-between px-4 sm:px-8 py-4 bg-gradient-to-b from-black/85 via-black/50 to-transparent">
-            <button id="backFromCinemaBtn" type="button" class="inline-flex items-center gap-1.5 text-xs sm:text-sm font-bold text-rose-200 hover:text-white bg-white/10 hover:bg-white/20 backdrop-blur-md px-3.5 py-2 rounded-full border border-white/15 transition-all cursor-pointer">
+        <header class="relative z-20 flex items-center justify-between px-4 sm:px-8 py-4 bg-gradient-to-b from-purple-950/75 via-purple-900/35 to-transparent">
+            <button id="backFromCinemaBtn" type="button" class="inline-flex items-center gap-1.5 text-xs sm:text-sm font-bold text-white bg-purple-950/65 hover:bg-purple-900/85 backdrop-blur-md px-3.5 py-2 rounded-full border border-white/25 shadow-md transition-all cursor-pointer">
                 <span>←</span>
                 <span>Kembali</span>
             </button>
 
-            <div class="text-center">
-                <span class="text-[11px] uppercase tracking-[0.25em] text-rose-300/90 font-bold block">Now Showing</span>
-                <h2 class="text-sm sm:text-base font-bold text-white">Happy 18th Birthday ❤️</h2>
+            <div class="text-center bg-white/75 backdrop-blur-md px-4 py-1.5 rounded-full border border-purple-200/80 shadow-sm">
+                <span class="text-[10px] uppercase tracking-[0.22em] text-purple-600 font-bold block">Now Showing</span>
+                <h2 class="text-xs sm:text-sm font-bold text-purple-950">Happy 18th Birthday ❤️</h2>
             </div>
 
             <!-- Tombol Mute / Unmute Musik -->
-            <button id="toggleMusicBtn" type="button" aria-label="Suara musik" class="inline-flex items-center gap-1.5 text-xs sm:text-sm font-bold text-rose-100 bg-rose-600/80 hover:bg-rose-500 backdrop-blur-md px-3.5 py-2 rounded-full border border-rose-300/30 shadow-lg transition-all cursor-pointer">
+            <button id="toggleMusicBtn" type="button" aria-label="Suara musik" class="inline-flex items-center gap-1.5 text-xs sm:text-sm font-bold text-white bg-purple-700/85 hover:bg-purple-600 backdrop-blur-md px-3.5 py-2 rounded-full border border-purple-200/40 shadow-lg transition-all cursor-pointer">
                 <span id="musicIcon">🔊</span>
                 <span id="musicLabel" class="hidden sm:inline">Musik Nyala</span>
             </button>
         </header>
 
-        <!-- Area Gulungan Filmstrip Bioskop Vertikal (Infinite Scroll ke Atas) -->
-        <div class="relative flex-1 w-full max-w-md mx-auto overflow-hidden px-6 sm:px-10">
-            <!-- Bingkai klise film kiri & kanan -->
-            <div class="film-sprockets absolute left-1.5 sm:left-3 top-0 bottom-0 w-3 sm:w-4 pointer-events-none z-10"></div>
-            <div class="film-sprockets absolute right-1.5 sm:right-3 top-0 bottom-0 w-3 sm:w-4 pointer-events-none z-10"></div>
+        <!-- Area Gulungan Kertas Bioskop Hitam Miring (Mengalir Kiri Bawah -> Kanan Atas) -->
+        <div class="relative flex-1 w-full overflow-hidden">
+            <div class="cinema-diagonal-wrapper">
+                <div class="cinema-black-reel py-2.5">
+                    <!-- Lubang rol film putih/abu di tepi atas gulungan hitam -->
+                    <div class="film-sprockets-horizontal mb-2.5"></div>
 
-            <!-- Gradasi pudar atas & bawah agar gulungan terlihat mulus seperti layar bioskop -->
-            <div class="absolute top-0 inset-x-0 h-16 bg-gradient-to-b from-stone-950 to-transparent z-10 pointer-events-none"></div>
-            <div class="absolute bottom-0 inset-x-0 h-20 bg-gradient-to-t from-stone-950 to-transparent z-10 pointer-events-none"></div>
+                    <!-- Track Foto Horizontal yang Bergerak Miring dari Kiri Bawah ke Kanan Atas -->
+                    <div id="cinemaTrack" class="cinema-track gap-5 px-4">
+                        <!-- Item foto akan diisi otomatis oleh JavaScript & diduplikasi agar loop mulus tanpa putus -->
+                    </div>
 
-            <!-- Track Foto yang Bergerak ke Atas Terus-Menerus -->
-            <div id="cinemaTrack" class="cinema-track flex flex-col gap-6 py-6">
-                <!-- Item foto akan diisi otomatis oleh JavaScript & diduplikasi agar loop mulus tanpa putus -->
+                    <!-- Lubang rol film putih/abu di tepi bawah gulungan hitam -->
+                    <div class="film-sprockets-horizontal mt-2.5"></div>
+                </div>
             </div>
         </div>
 
         <!-- Footer Ucapan Hangat di Bawah -->
-        <footer class="relative z-20 text-center px-4 py-3.5 bg-gradient-to-t from-black/90 via-black/60 to-transparent">
-            <p class="text-xs sm:text-sm text-rose-200 font-semibold">
+        <footer class="relative z-20 text-center px-4 py-3.5 bg-gradient-to-t from-purple-950/80 via-purple-900/40 to-transparent">
+            <p class="inline-block text-xs sm:text-sm text-white font-semibold bg-purple-950/60 backdrop-blur-md px-4 py-1.5 rounded-full border border-white/20 shadow">
                 Selamat ulang tahun ke-18 sayang, semoga bahagia selalu menyertaimu ✨
             </p>
         </footer>
@@ -553,6 +690,7 @@
             // Referensi Elemen Layar Bioskop & Audio
             const cinemaScreen = document.getElementById('cinemaScreen');
             const cinemaTrack = document.getElementById('cinemaTrack');
+            const wisteriaPetalsLayer = document.getElementById('wisteriaPetalsLayer');
             const backFromCinemaBtn = document.getElementById('backFromCinemaBtn');
             const toggleMusicBtn = document.getElementById('toggleMusicBtn');
             const musicIcon = document.getElementById('musicIcon');
@@ -564,19 +702,54 @@
             let synthInterval = null;
             let synthCtx = null;
 
-            // Bangun daftar kartu foto filmstrip bioskop (diduplikasi 2x untuk infinite scroll mulus)
+            // Buat kelopak bunga wisteria yang berguguran perlahan di latar belakang
+            function buildWisteriaPetals() {
+                if (!wisteriaPetalsLayer) return;
+                const colors = ['#c084fc', '#a855f7', '#e879f9', '#f0abfc', '#d8b4fe', '#f5d0fe'];
+                const petalCount = 28;
+                let html = '';
+
+                for (let i = 0; i < petalCount; i++) {
+                    const left = (Math.random() * 100).toFixed(2);
+                    const width = (10 + Math.random() * 10).toFixed(1);
+                    const height = (14 + Math.random() * 12).toFixed(1);
+                    const duration = (8 + Math.random() * 9).toFixed(2);
+                    const delay = (-Math.random() * 15).toFixed(2);
+                    const color = colors[i % colors.length];
+
+                    html += `
+                        <span
+                            class="wisteria-petal"
+                            style="
+                                left: ${left}%;
+                                width: ${width}px;
+                                height: ${height}px;
+                                background: ${color};
+                                box-shadow: 0 2px 6px rgba(147, 51, 234, 0.25);
+                                animation-duration: ${duration}s;
+                                animation-delay: ${delay}s;
+                            "
+                        ></span>
+                    `;
+                }
+                wisteriaPetalsLayer.innerHTML = html;
+            }
+
+            buildWisteriaPetals();
+
+            // Bangun daftar kartu foto pita seluloid hitam (diduplikasi 2x untuk infinite scroll diagonal mulus)
             function buildCinemaFilmstrip() {
                 if (!cinemaTrack) return;
                 const allSlides = [...cinemaPhotos, ...cinemaPhotos];
                 cinemaTrack.innerHTML = allSlides.map((item, idx) => {
                     const frameNumber = (idx % cinemaPhotos.length) + 1;
                     return `
-                        <article class="bg-stone-900/95 border-2 border-rose-200/25 rounded-2xl p-3 shadow-2xl">
-                            <div class="flex items-center justify-between text-[10px] font-mono text-rose-300/75 mb-2 px-1">
-                                <span>SCENE 0${frameNumber}</span>
+                        <article class="w-56 sm:w-64 shrink-0 bg-zinc-950 border-2 border-zinc-800 rounded-xl p-2.5 shadow-2xl">
+                            <div class="flex items-center justify-between text-[10px] font-mono text-zinc-400 mb-1.5 px-1">
+                                <span>FRAME 0${frameNumber}</span>
                                 <span>15 • 11 • 2026</span>
                             </div>
-                            <div class="relative aspect-[4/5] w-full overflow-hidden rounded-xl bg-stone-800">
+                            <div class="relative aspect-[4/5] w-full overflow-hidden rounded-lg bg-zinc-900 border border-zinc-800">
                                 <img
                                     src="${item.src}"
                                     onerror="this.onerror=null;this.src='${item.fallback}';"
@@ -584,7 +757,7 @@
                                     class="w-full h-full object-cover"
                                 />
                             </div>
-                            <p class="mt-2.5 text-center text-xs sm:text-sm font-semibold text-rose-100 px-1 leading-snug">
+                            <p class="mt-2 text-center text-xs font-semibold text-zinc-100 px-1 leading-snug line-clamp-2">
                                 ${item.caption}
                             </p>
                         </article>
@@ -952,4 +1125,4 @@
         });
     </script>
 </body>
-</html>
+    </html>
