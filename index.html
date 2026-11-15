@@ -179,6 +179,25 @@
             animation: paperSettleIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
         }
 
+        /* Efek transisi gelap ke terang (fade overlay) */
+        @keyframes darkToLightFade {
+            0% { opacity: 0; background-color: #000000; }
+            50% { opacity: 1; background-color: #000000; }
+            100% { opacity: 0; background-color: #ffffff; }
+        }
+
+        .transition-dark-light {
+            position: absolute;
+            inset: 0;
+            z-index: 50;
+            pointer-events: none;
+            opacity: 0;
+        }
+
+        .transition-dark-light.active {
+            animation: darkToLightFade 0.7s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+        }
+
         /* Animasi Slide Bioskop / Filmstrip Hitam Mengalir Miring dari Kiri Bawah ke Kanan Atas */
         @keyframes cinemaDiagonalFlow {
             0% {
@@ -367,6 +386,9 @@
             <!-- Hiasan pita / sudut di dalam kartu -->
             <div class="absolute -top-10 -right-10 w-28 h-28 bg-rose-100 rounded-full opacity-70 pointer-events-none"></div>
             <div class="absolute -bottom-10 -left-10 w-28 h-28 bg-pink-100 rounded-full opacity-70 pointer-events-none"></div>
+
+            <!-- Efek gelap ke terang saat pindah slide -->
+            <div id="darkLightOverlay" class="transition-dark-light"></div>
 
             <!-- Header Kartu -->
             <div class="relative flex items-center justify-between mb-3">
@@ -734,12 +756,71 @@
         </div>
 
         <!-- Footer Ucapan Hangat di Bawah -->
-        <footer class="relative z-20 text-center px-4 py-3.5 bg-gradient-to-t from-purple-950/80 via-purple-900/40 to-transparent">
+        <footer class="relative z-20 text-center px-4 py-3.5 bg-gradient-to-t from-purple-950/80 via-purple-900/40 to-transparent flex flex-col items-center gap-2">
             <p class="inline-block text-xs sm:text-sm text-white font-semibold bg-purple-950/60 backdrop-blur-md px-4 py-1.5 rounded-full border border-white/20 shadow">
                 Selamat ulang tahun ke-18 sayang, semoga bahagia selalu menyertaimu ✨
             </p>
+            <!-- Tombol Hijau Tambahan di Footer Bioskop -->
+            <button id="openExtraWishBtn" type="button" class="bg-emerald-500 hover:bg-emerald-600 active:scale-95 text-white font-bold text-xs sm:text-sm px-4 py-2 rounded-full shadow-lg border border-emerald-300/40 cursor-pointer transition-all">
+                🎁 Klik Kejutan Spesial
+            </button>
         </footer>
     </section>
+
+    <!-- ================= MODAL TAMBAHAN: UCAPAN SPESIAL & VIDEO 2.30 MENIT ================= -->
+    <div id="extraWishModal" class="fixed inset-0 z-60 hidden items-center justify-center p-4 bg-purple-950/70 backdrop-blur-md">
+        <div class="relative w-full max-w-lg bg-white/95 backdrop-blur-xl rounded-[2rem] shadow-2xl border-2 border-purple-200 p-6 sm:p-8 text-center overflow-hidden">
+            
+            <!-- Tahap 1: Pesan Ucapan -->
+            <div id="extraWishStep1" class="flex flex-col items-center justify-center space-y-4">
+                <div class="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center text-3xl shadow-inner mb-1">
+                    💌
+                </div>
+                <h3 class="text-xl sm:text-2xl font-bold text-purple-950 leading-snug">
+                    "Hei! Ada yang ucapin birthday ke kamu juga lohhh"
+                </h3>
+                <p class="text-purple-700/80 text-sm font-medium">
+                    Ada satu video spesial yang sudah disiapkan khusus buat kamu di slide selanjutnya...
+                </p>
+                <div class="flex items-center justify-center gap-3 pt-2">
+                    <button id="closeExtraWishModalBtn" type="button" class="px-5 py-2.5 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold text-sm cursor-pointer transition-all">
+                        Tutup
+                    </button>
+                    <button id="goToVideoSlideBtn" type="button" class="px-6 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white font-bold text-sm shadow-md cursor-pointer transition-all">
+                        Lanjut ke Video ✨
+                    </button>
+                </div>
+            </div>
+
+            <!-- Tahap 2: Video Player (Durasi 2:30) -->
+            <div id="extraWishStep2" class="hidden flex-col items-center justify-center space-y-4">
+                <div class="w-full flex items-center justify-between mb-1">
+                    <span class="text-xs font-bold text-purple-600 bg-purple-50 px-3 py-1 rounded-full border border-purple-200">
+                        🎥 Special Video (Durasi 2:30)
+                    </span>
+                    <button id="backToWishTextBtn" type="button" class="text-xs font-bold text-purple-500 hover:text-purple-700 cursor-pointer">
+                        ← Kembali ke Pesan
+                    </button>
+                </div>
+
+                <!-- Elemen Video (Ganti 'video.mp4' dengan file video kamu, atur durasi 2:30) -->
+                <div class="relative w-full aspect-video rounded-2xl overflow-hidden bg-black shadow-lg border border-purple-200">
+                    <video id="specialBirthdayVideo" src="video.mp4" controls preload="metadata" class="w-full h-full object-cover">
+                        Browser kamu tidak mendukung pemutaran video.
+                    </video>
+                </div>
+
+                <p class="text-xs font-semibold text-purple-900/80">
+                    Nikmati videonya sampai selesai ya, sayang! ❤️
+                </p>
+
+                <button id="closeAllExtraModalBtn" type="button" class="w-full py-2.5 rounded-xl bg-purple-600 hover:bg-purple-700 text-white font-bold text-sm shadow-md cursor-pointer transition-all">
+                    Selesai & Kembali
+                </button>
+            </div>
+
+        </div>
+    </div>
 
     <!-- Script Interaktif -->
     <script>
@@ -794,6 +875,7 @@
             const baseCalendarSheet = document.getElementById('baseCalendarSheet');
             const baseCalYear = document.getElementById('baseCalYear');
             const flyingSheetsContainer = document.getElementById('flyingSheetsContainer');
+            const darkLightOverlay = document.getElementById('darkLightOverlay');
 
             // Referensi Elemen Layar Bioskop & Audio
             const cinemaScreen = document.getElementById('cinemaScreen');
@@ -805,16 +887,27 @@
             const musicLabel = document.getElementById('musicLabel');
             const bgMusicAudio = document.getElementById('bgMusicAudio');
 
+            // Referensi Elemen Modal Tambahan (Ucapan & Video)
+            const openExtraWishBtn = document.getElementById('openExtraWishBtn');
+            const extraWishModal = document.getElementById('extraWishModal');
+            const extraWishStep1 = document.getElementById('extraWishStep1');
+            const extraWishStep2 = document.getElementById('extraWishStep2');
+            const closeExtraWishModalBtn = document.getElementById('closeExtraWishModalBtn');
+            const goToVideoSlideBtn = document.getElementById('goToVideoSlideBtn');
+            const backToWishTextBtn = document.getElementById('backToWishTextBtn');
+            const closeAllExtraModalBtn = document.getElementById('closeAllExtraModalBtn');
+            const specialBirthdayVideo = document.getElementById('specialBirthdayVideo');
+
             let windTimers = [];
             let isMuted = false;
             let synthInterval = null;
             let synthCtx = null;
 
-            // Buat kelopak bunga wisteria yang berguguran perlahan di latar belakang
+            // Buat kelopak bunga sakura / wisteria yang berguguran perlahan di latar belakang (depan & bioskop)
             function buildWisteriaPetals() {
                 if (!wisteriaPetalsLayer) return;
-                const colors = ['#c084fc', '#a855f7', '#e879f9', '#f0abfc', '#d8b4fe', '#f5d0fe'];
-                const petalCount = 28;
+                const colors = ['#fbcfe8', '#f472b6', '#fda4af', '#f43f5e', '#fbcfe8', '#ffe4e6'];
+                const petalCount = 35;
                 let html = '';
 
                 for (let i = 0; i < petalCount; i++) {
@@ -833,7 +926,7 @@
                                 width: ${width}px;
                                 height: ${height}px;
                                 background: ${color};
-                                box-shadow: 0 2px 6px rgba(147, 51, 234, 0.25);
+                                box-shadow: 0 2px 6px rgba(244, 63, 94, 0.25);
                                 animation-duration: ${duration}s;
                                 animation-delay: ${delay}s;
                             "
@@ -841,6 +934,15 @@
                     `;
                 }
                 wisteriaPetalsLayer.innerHTML = html;
+
+                // Tambahkan juga ke hiasan depan agar bagian depan kena sakura berjatuhan
+                const decorationsEl = document.getElementById('decorations');
+                if (decorationsEl) {
+                    const frontSakura = document.createElement('div');
+                    frontSakura.className = 'absolute inset-0 pointer-events-none overflow-hidden z-0';
+                    frontSakura.innerHTML = html;
+                    decorationsEl.appendChild(frontSakura);
+                }
             }
 
             buildWisteriaPetals();
@@ -1086,15 +1188,23 @@
                 calendarStep1.classList.add('flex');
             }
 
-            // Tampilkan Slide 2 (Kalender ketiup angin 2008 -> 2026)
+            // Tampilkan Slide 2 dengan efek gelap ke terang
             function showCalendarStep2() {
                 playSweetChime();
-                slideCounter.textContent = '2008 → 2026';
-                calendarStep1.classList.add('hidden');
-                calendarStep1.classList.remove('flex');
-                calendarStep2.classList.remove('hidden');
-                calendarStep2.classList.add('flex');
-                startCalendarWindAnimation();
+                if (darkLightOverlay) {
+                    darkLightOverlay.classList.remove('active');
+                    void darkLightOverlay.offsetWidth; // trigger reflow
+                    darkLightOverlay.classList.add('active');
+                }
+
+                setTimeout(() => {
+                    slideCounter.textContent = '2008 → 2026';
+                    calendarStep1.classList.add('hidden');
+                    calendarStep1.classList.remove('flex');
+                    calendarStep2.classList.remove('hidden');
+                    calendarStep2.classList.add('flex');
+                    startCalendarWindAnimation();
+                }, 350);
             }
 
             // Buka Layar Penuh Bioskop Kenangan + Putar Lagu Otomatis
@@ -1223,6 +1333,74 @@
                 replayWindBtn.addEventListener('click', (e) => {
                     e.stopPropagation();
                     startCalendarWindAnimation();
+                });
+            }
+
+            // Event Listener untuk Modal Kejutan & Video (2.30)
+            if (openExtraWishBtn) {
+                openExtraWishBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    playSweetChime();
+                    extraWishStep1.classList.remove('hidden');
+                    extraWishStep1.classList.add('flex');
+                    extraWishStep2.classList.add('hidden');
+                    extraWishStep2.classList.remove('flex');
+                    extraWishModal.classList.remove('hidden');
+                    extraWishModal.classList.add('flex');
+                });
+            }
+
+            if (closeExtraWishModalBtn) {
+                closeExtraWishModalBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    extraWishModal.classList.add('hidden');
+                    extraWishModal.classList.remove('flex');
+                    if (specialBirthdayVideo) specialBirthdayVideo.pause();
+                });
+            }
+
+            if (goToVideoSlideBtn) {
+                goToVideoSlideBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    playSweetChime();
+                    extraWishStep1.classList.add('hidden');
+                    extraWishStep1.classList.remove('flex');
+                    extraWishStep2.classList.remove('hidden');
+                    extraWishStep2.classList.add('flex');
+                    if (specialBirthdayVideo) {
+                        specialBirthdayVideo.currentTime = 0;
+                        specialBirthdayVideo.play().catch(() => {});
+                    }
+                });
+            }
+
+            if (backToWishTextBtn) {
+                backToWishTextBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    if (specialBirthdayVideo) specialBirthdayVideo.pause();
+                    extraWishStep2.classList.add('hidden');
+                    extraWishStep2.classList.remove('flex');
+                    extraWishStep1.classList.remove('hidden');
+                    extraWishStep1.classList.add('flex');
+                });
+            }
+
+            if (closeAllExtraModalBtn) {
+                closeAllExtraModalBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    if (specialBirthdayVideo) specialBirthdayVideo.pause();
+                    extraWishModal.classList.add('hidden');
+                    extraWishModal.classList.remove('flex');
+                });
+            }
+
+            if (extraWishModal) {
+                extraWishModal.addEventListener('click', (e) => {
+                    if (e.target === extraWishModal) {
+                        if (specialBirthdayVideo) specialBirthdayVideo.pause();
+                        extraWishModal.classList.add('hidden');
+                        extraWishModal.classList.remove('flex');
+                    }
                 });
             }
 
