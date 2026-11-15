@@ -3,202 +3,505 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Special for My Bubub Imo 💖</title>
-    <!-- Tailwind CSS CDN -->
+    <title>Pesan Spesial Untukmu ❤️</title>
+    <!-- Tailwind CSS untuk tata letak responsif -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts: Quicksand & Pacifico untuk nuansa manis dan estetik -->
+    <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Quicksand:wght@500;600;700&display=swap" rel="stylesheet">
     
     <style>
+        /* Pengaturan dasar font dan animasi */
         body {
-            font-family: 'Poppins', sans-serif;
-            background: linear-gradient(135deg, #fbcfe8 0%, #f472b6 50%, #e879f9 100%);
-            min-height: 100vh;
-        }
-        .font-fredoka {
-            font-family: 'Fredoka', cursive;
-        }
-        .glass-card {
-            background: rgba(255, 255, 255, 0.88);
-            backdrop-filter: blur(12px);
-            border: 2px solid rgba(255, 255, 255, 0.6);
-        }
-        /* Floating Animation */
-        @keyframes float {
-            0%, 100% { transform: translateY(0px) rotate(0deg); }
-            50% { transform: translateY(-10px) rotate(3deg); }
-        }
-        .animate-float {
-            animation: float 3s ease-in-out infinite;
-        }
-        /* Heart Fall Animation */
-        .heart-particle {
-            position: fixed;
-            top: -10%;
-            z-index: 0;
+            font-family: 'Quicksand', sans-serif;
+            overflow: hidden;
             user-select: none;
-            pointer-events: none;
-            animation: fall linear forwards;
+            -webkit-tap-highlight-color: transparent;
         }
-        @keyframes fall {
-            to {
-                transform: translateY(105vh) rotate(360deg);
+
+        .font-romantic {
+            font-family: 'Pacifico', cursive;
+        }
+
+        /* Latar belakang gradasi lembut romantis */
+        .bg-romantic {
+            background: linear-gradient(135deg, #ffe4e6 0%, #fbcfe8 45%, #f5d0fe 100%);
+        }
+
+        /* Animasi melayang untuk hiasan background */
+        @keyframes floatSlow {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-18px) rotate(6deg); }
+        }
+
+        @keyframes floatReverse {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(15px) rotate(-6deg); }
+        }
+
+        @keyframes pulseGlow {
+            0% {
+                box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7), 0 15px 30px rgba(220, 38, 38, 0.4);
+                transform: scale(1);
             }
+            70% {
+                box-shadow: 0 0 0 24px rgba(239, 68, 68, 0), 0 15px 30px rgba(220, 38, 38, 0.4);
+                transform: scale(1.04);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(239, 68, 68, 0), 0 15px 30px rgba(220, 38, 38, 0.4);
+                transform: scale(1);
+            }
+        }
+
+        @keyframes sparkleTwinkle {
+            0%, 100% { opacity: 0.3; transform: scale(0.8); }
+            50% { opacity: 1; transform: scale(1.2); }
+        }
+
+        /* Animasi gelombang suara (Voice Note visual) */
+        @keyframes soundWave {
+            0%, 100% { height: 8px; }
+            50% { height: 28px; }
+        }
+
+        .animate-float-slow {
+            animation: floatSlow 5s ease-in-out infinite;
+        }
+
+        .animate-float-reverse {
+            animation: floatReverse 6s ease-in-out infinite;
+        }
+
+        .mic-button {
+            background: radial-gradient(circle at 30% 30%, #ff5e62, #e11d48 65%, #9f1239 100%);
+            animation: pulseGlow 2.2s infinite;
+            transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .mic-button:active {
+            transform: scale(0.92) !important;
+        }
+
+        .sparkle {
+            animation: sparkleTwinkle 3s ease-in-out infinite;
+        }
+
+        /* Transisi kartu melayang (tidak full screen, background tetap terlihat di pinggir) */
+        .modal-backdrop {
+            transition: opacity 0.4s ease, backdrop-filter 0.4s ease;
+        }
+
+        .modal-card {
+            transition: all 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .modal-hidden .modal-backdrop {
+            opacity: 0;
+            pointer-events: none;
+            backdrop-filter: blur(0px);
+        }
+
+        .modal-hidden .modal-card {
+            opacity: 0;
+            transform: scale(0.75) translateY(30px);
+            pointer-events: none;
+        }
+
+        .modal-visible .modal-backdrop {
+            opacity: 1;
+            pointer-events: auto;
+            backdrop-filter: blur(4px);
+        }
+
+        .modal-visible .modal-card {
+            opacity: 1;
+            transform: scale(1) translateY(0);
+            pointer-events: auto;
+        }
+
+        /* Bar gelombang suara */
+        .wave-bar {
+            width: 4px;
+            border-radius: 9999px;
+            background: linear-gradient(to top, #f43f5e, #fb7185);
+            animation: soundWave 1s ease-in-out infinite;
+        }
+
+        /* Animasi hati terbang saat layar disentuh */
+        @keyframes flyUpHeart {
+            0% {
+                opacity: 1;
+                transform: translate(-50%, -50%) scale(0.5);
+            }
+            100% {
+                opacity: 0;
+                transform: translate(-50%, -140px) scale(1.4);
+            }
+        }
+
+        .floating-tap-heart {
+            position: fixed;
+            pointer-events: none;
+            z-index: 60;
+            animation: flyUpHeart 1.2s ease-out forwards;
         }
     </style>
 </head>
-<body class="flex items-center justify-center p-4 relative overflow-x-hidden min-h-screen">
+<body class="bg-romantic min-h-screen w-full relative flex items-center justify-center p-4">
 
-    <!-- Container Utama -->
-    <div class="w-full max-w-md z-10">
+    <!-- ================= HIASAN DEPAN (BACKGROUND DECORATIONS) ================= -->
+    <div id="decorations" class="fixed inset-0 pointer-events-none overflow-hidden z-0">
+        <!-- Cahaya lembut di sudut -->
+        <div class="absolute -top-20 -left-20 w-72 h-72 bg-pink-300/40 rounded-full blur-3xl"></div>
+        <div class="absolute -bottom-24 -right-20 w-80 h-80 bg-rose-300/40 rounded-full blur-3xl"></div>
+        <div class="absolute top-1/3 right-10 w-40 h-40 bg-purple-200/50 rounded-full blur-2xl"></div>
 
-        <!-- HALAMAN 1: WELCOME SCREEN -->
-        <div id="page-1" class="glass-card rounded-3xl p-6 text-center shadow-2xl transition-all duration-500 animate-float">
-            <div class="text-6xl mb-4">💖✨</div>
-            <h1 class="font-fredoka text-3xl font-bold text-pink-600 mb-2">Haloo Bubub Imo! 🥰</h1>
-            <p class="text-gray-600 mb-6 text-sm">
-                Ada mini quiz khusus buat kamu nih mwehehe. Coba kita tes seberapa paham kamu sama aku! 😜
-            </p>
-            <button onclick="nextPage(2)" class="w-full bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-600 hover:to-rose-600 text-white font-bold py-3.5 px-6 rounded-2xl shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 active:translate-y-0 transition-all font-fredoka text-lg flex items-center justify-center gap-2">
-                <span>Mulai Quiz!</span>
-                <i class="fa-solid fa-arrow-right"></i>
-            </button>
-        </div>
+        <!-- Bingkai garis putus-putus estetik di pinggir layar -->
+        <div class="absolute inset-3 sm:inset-5 border-2 border-dashed border-rose-300/60 rounded-3xl"></div>
 
-        <!-- HALAMAN 2: TEBAK-TEBAKAN SUSU -->
-        <div id="page-2" class="glass-card rounded-3xl p-6 shadow-2xl hidden transition-all duration-500">
-            <!-- Header Pertanyaan -->
-            <div class="text-center mb-6">
-                <span class="bg-pink-100 text-pink-600 font-bold px-3 py-1 rounded-full text-xs uppercase tracking-wider">Pertanyaan #1</span>
-                <h2 class="font-fredoka text-2xl font-bold text-gray-800 mt-2">
-                    Apa susu kesukaan aku? 🥛✨
-                </h2>
-            </div>
+        <!-- Elemen Hati & Bintang Melayang -->
+        <svg class="absolute top-12 left-8 sm:left-16 w-10 h-10 text-rose-400/70 animate-float-slow" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+        </svg>
 
-            <!-- Grid 4 Kolom Pilihan -->
-            <div class="grid grid-cols-1 gap-3 mb-4">
-                
-                <!-- Opsi 1 -->
-                <button id="opt-1" onclick="checkAnswer(1)" class="w-full p-4 rounded-2xl border-2 border-pink-200 bg-white/70 hover:bg-pink-50 text-gray-700 font-medium text-left transition-all duration-200 flex items-center justify-between group">
-                    <span>🥛 Susu Nobo</span>
-                    <i class="fa-solid fa-chevron-right text-pink-300 group-hover:text-pink-500 transition-colors"></i>
-                </button>
+        <svg class="absolute bottom-16 left-10 sm:left-24 w-8 h-8 text-pink-500/60 animate-float-reverse" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+        </svg>
 
-                <!-- Opsi 2 -->
-                <button id="opt-2" onclick="checkAnswer(2)" class="w-full p-4 rounded-2xl border-2 border-pink-200 bg-white/70 hover:bg-pink-50 text-gray-700 font-medium text-left transition-all duration-200 flex items-center justify-between group">
-                    <span>🍫 Susu Frisian Flag Coklat</span>
-                    <i class="fa-solid fa-chevron-right text-pink-300 group-hover:text-pink-500 transition-colors"></i>
-                </button>
+        <svg class="absolute top-20 right-10 sm:right-20 w-12 h-12 text-rose-300 animate-float-reverse" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+        </svg>
 
-                <!-- Opsi 3 -->
-                <button id="opt-3" onclick="checkAnswer(3)" class="w-full p-4 rounded-2xl border-2 border-pink-200 bg-white/70 hover:bg-pink-50 text-gray-700 font-medium text-left transition-all duration-200 flex items-center justify-between group">
-                    <span>🧃 Susu Cimory Coklat</span>
-                    <i class="fa-solid fa-chevron-right text-pink-300 group-hover:text-pink-500 transition-colors"></i>
-                </button>
+        <svg class="absolute bottom-20 right-12 sm:right-24 w-9 h-9 text-pink-400/70 animate-float-slow" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+        </svg>
 
-                <!-- Opsi 4 (BENAR) -->
-                <button id="opt-4" onclick="checkAnswer(4)" class="w-full p-4 rounded-2xl border-2 border-pink-200 bg-white/70 hover:bg-pink-50 text-gray-700 font-medium text-left transition-all duration-200 flex items-center justify-between group">
-                    <span>🐒 Susu Monyet</span>
-                    <i class="fa-solid fa-chevron-right text-pink-300 group-hover:text-pink-500 transition-colors"></i>
-                </button>
-
-            </div>
-
-            <!-- Feedback Message Box -->
-            <div id="feedback-box" class="hidden p-4 rounded-2xl text-center font-bold text-sm mb-4 transition-all animate-bounce">
-                <p id="feedback-text"></p>
-            </div>
-
-            <!-- Tombol Lanjut (Hanya Muncul Pas Benar) -->
-            <button id="btn-next" onclick="alert('Ditunggu konsep halaman selanjutnya yaa! 😉')" class="hidden w-full bg-gradient-to-r from-emerald-400 to-green-500 hover:from-emerald-500 hover:to-green-600 text-white font-bold py-3.5 px-6 rounded-2xl shadow-lg font-fredoka text-lg flex items-center justify-center gap-2 transition-all">
-                <span>Lanjut Pertanyaan Selanjutnya!</span>
-                <i class="fa-solid fa-circle-arrow-right"></i>
-            </button>
-        </div>
-
+        <!-- Kilauan Bintang (Sparkles) -->
+        <svg class="absolute top-1/4 left-1/4 w-6 h-6 text-amber-400 sparkle" style="animation-delay: 0.2s;" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 2L14.4 9.6L22 12L14.4 14.4L12 22L9.6 14.4L2 12L9.6 9.6L12 2Z"/>
+        </svg>
+        <svg class="absolute bottom-1/3 right-1/4 w-5 h-5 text-rose-400 sparkle" style="animation-delay: 1.1s;" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 2L14.4 9.6L22 12L14.4 14.4L12 22L9.6 14.4L2 12L9.6 9.6L12 2Z"/>
+        </svg>
+        <svg class="absolute top-1/3 right-1/3 w-4 h-4 text-pink-500 sparkle" style="animation-delay: 1.8s;" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 2L14.4 9.6L22 12L14.4 14.4L12 22L9.6 14.4L2 12L9.6 9.6L12 2Z"/>
+        </svg>
     </div>
 
+    <!-- ================= TAMPILAN UTAMA (COVER DEPAN) ================= -->
+    <main id="frontCover" class="relative z-10 flex flex-col items-center justify-center text-center max-w-md w-full px-4 transition-all duration-500">
+        
+        <!-- Badge kecil pemanis di atas -->
+        <div class="mb-4 inline-flex items-center gap-1.5 bg-white/70 backdrop-blur-md px-4 py-1.5 rounded-full shadow-sm border border-rose-200/80 text-rose-500 text-xs sm:text-sm font-bold tracking-wide animate-bounce">
+            <span>💌</span>
+            <span>Ada pesan kecil buat kamu</span>
+        </div>
+
+        <!-- Teks Utama di Atas Tombol -->
+        <h1 class="text-2xl sm:text-3xl md:text-4xl font-bold text-rose-900 leading-snug mb-8 drop-shadow-sm bg-white/55 backdrop-blur-sm px-6 py-4 rounded-3xl border border-white/80 shadow-md">
+            "Hai sayang pencet tombol ini deh"
+        </h1>
+
+        <!-- Tombol Power Bulat Merah dengan Ikon Mic -->
+        <div class="relative flex items-center justify-center my-2">
+            <!-- Cincin dekoratif luar -->
+            <div class="absolute w-36 h-36 sm:w-40 sm:h-40 rounded-full border-2 border-rose-400/40 animate-ping" style="animation-duration: 2.8s;"></div>
+            
+            <button id="powerMicBtn" aria-label="Pencet tombol mikrofon" class="mic-button relative w-28 h-28 sm:w-32 sm:h-32 rounded-full flex flex-col items-center justify-center text-white border-4 border-white/90 cursor-pointer focus:outline-none">
+                <!-- Ikon Mikrofon SVG -->
+                <svg class="w-12 h-12 sm:w-14 sm:h-14 drop-shadow-md" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z" fill="rgba(255,255,255,0.25)"/>
+                    <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+                    <line x1="12" y1="19" x2="12" y2="22"/>
+                    <line x1="8" y1="22" x2="16" y2="22"/>
+                </svg>
+            </button>
+        </div>
+
+        <!-- Petunjuk kecil di bawah tombol -->
+        <p class="mt-7 text-rose-700/80 text-sm font-semibold flex items-center gap-1.5">
+            <span>👆</span> Tap tombol merahnya ya
+        </p>
+    </main>
+
+    <!-- ================= KARTU POP-UP MELAYANG (BUKAN FULL-SCREEN) ================= -->
+    <!-- Latar belakang cover tetap terlihat di sekeliling kartu ini -->
+    <div id="cardModal" class="fixed inset-0 z-30 flex items-center justify-center p-5 sm:p-8 modal-hidden">
+        
+        <!-- Backdrop semi-transparan agar background depan tetap kelihatan -->
+        <div id="modalBackdrop" class="modal-backdrop fixed inset-0 bg-rose-950/25"></div>
+
+        <!-- Kartu Konten Utama (Ukuran pas di tengah layar, tidak menutupi penuh) -->
+        <div class="modal-card relative z-10 w-full max-w-sm sm:max-w-md bg-white/95 backdrop-blur-xl rounded-[2rem] shadow-2xl border-2 border-rose-200 p-6 sm:p-7 text-center overflow-hidden">
+            
+            <!-- Hiasan pita / sudut di dalam kartu -->
+            <div class="absolute -top-10 -right-10 w-28 h-28 bg-rose-100 rounded-full opacity-70 pointer-events-none"></div>
+            <div class="absolute -bottom-10 -left-10 w-28 h-28 bg-pink-100 rounded-full opacity-70 pointer-events-none"></div>
+
+            <!-- Header Kartu: Indikator Voice Note / Pesan Spesial -->
+            <div class="relative flex items-center justify-between mb-4">
+                <span id="slideCounter" class="text-xs font-bold text-rose-500 bg-rose-50 px-3 py-1 rounded-full border border-rose-200">
+                    Pesan 1 / 3
+                </span>
+                <button id="closeModalBtn" aria-label="Tutup kartu" class="w-8 h-8 rounded-full bg-rose-50 hover:bg-rose-100 text-rose-500 flex items-center justify-center transition-colors cursor-pointer">
+                    ✕
+                </button>
+            </div>
+
+            <!-- Visual Gelombang Suara (Kesan setelah memencet tombol mic) -->
+            <div class="bg-gradient-to-r from-rose-50 via-pink-50 to-rose-50 border border-rose-200/80 rounded-2xl p-3 mb-5 flex items-center justify-center gap-3 shadow-inner">
+                <div class="w-9 h-9 rounded-full bg-rose-500 text-white flex items-center justify-center shadow-sm shrink-0">
+                    <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/>
+                        <path d="M19 10v2a7 7 0 0 1-14 0v-2" fill="none" stroke="currentColor" stroke-width="2"/>
+                    </svg>
+                </div>
+                <!-- Animasi Wave Bars -->
+                <div class="flex items-center gap-1 h-8">
+                    <div class="wave-bar" style="animation-delay: 0.1s"></div>
+                    <div class="wave-bar" style="animation-delay: 0.3s"></div>
+                    <div class="wave-bar" style="animation-delay: 0.5s"></div>
+                    <div class="wave-bar" style="animation-delay: 0.2s"></div>
+                    <div class="wave-bar" style="animation-delay: 0.6s"></div>
+                    <div class="wave-bar" style="animation-delay: 0.4s"></div>
+                    <div class="wave-bar" style="animation-delay: 0.15s"></div>
+                    <div class="wave-bar" style="animation-delay: 0.45s"></div>
+                    <div class="wave-bar" style="animation-delay: 0.25s"></div>
+                    <div class="wave-bar" style="animation-delay: 0.55s"></div>
+                </div>
+                <span class="text-xs font-bold text-rose-500 shrink-0">Untukmu ❤️</span>
+            </div>
+
+            <!-- Area Konten Slide Mini di Dalam Kartu -->
+            <div id="slideContent" class="relative min-h-[175px] flex flex-col items-center justify-center transition-all duration-300">
+                <!-- Ikon/Emoji Besar -->
+                <div id="slideEmoji" class="text-5xl mb-3 transform transition-transform duration-300 hover:scale-110">
+                    🥰
+                </div>
+                <!-- Judul Slide -->
+                <h2 id="slideTitle" class="font-romantic text-2xl sm:text-3xl text-rose-600 mb-2">
+                    Hai Kesayangan Aku!
+                </h2>
+                <!-- Isi Pesan -->
+                <p id="slideText" class="text-gray-700 text-sm sm:text-base leading-relaxed font-medium px-1">
+                    Makasih ya udah pencet tombolnya. Aku cuma mau bilang kalau hari-hariku selalu jauh lebih indah sejak ada kamu di sampingku.
+                </p>
+            </div>
+
+            <!-- Indikator Titik (Dots) -->
+            <div id="slideDots" class="flex items-center justify-center gap-2 my-4">
+                <span class="w-2.5 h-2.5 rounded-full bg-rose-500 transition-all"></span>
+                <span class="w-2 h-2 rounded-full bg-rose-200 transition-all"></span>
+                <span class="w-2 h-2 rounded-full bg-rose-200 transition-all"></span>
+            </div>
+
+            <!-- Tombol Navigasi Mini di Dalam Kartu -->
+            <div class="relative flex items-center justify-between gap-3 mt-2">
+                <button id="prevSlideBtn" class="flex-1 py-2.5 px-4 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-600 font-bold text-sm transition-all disabled:opacity-40 disabled:pointer-events-none cursor-pointer">
+                    ← Sebelumnya
+                </button>
+                <button id="nextSlideBtn" class="flex-1 py-2.5 px-4 rounded-xl bg-gradient-to-r from-rose-500 to-pink-500 hover:from-rose-600 hover:to-pink-600 text-white font-bold text-sm shadow-md shadow-rose-200 transition-all cursor-pointer">
+                    Lanjut →
+                </button>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Script Interaktif -->
     <script>
-        // Fungsi Pindah Halaman
-        function nextPage(pageNumber) {
-            document.getElementById('page-1').classList.add('hidden');
-            document.getElementById('page-2').classList.remove('hidden');
+        // ==========================================
+        // KUSTOMISASI PESAN DI SINI (MUDAH DIEDIT)
+        // ==========================================
+        const slidesData = [
+            {
+                emoji: "🥰",
+                title: "Hai Kesayangan Aku!",
+                text: "Makasih ya udah pencet tombolnya. Aku cuma mau bilang kalau hari-hariku selalu jauh lebih indah dan berwarna sejak ada kamu."
+            },
+            {
+                emoji: "✨",
+                title: "Kamu Itu Spesial",
+                text: "Jangan lupa jaga kesehatan, jangan telat makan, dan jangan terlalu capek ya. Kalau ada apa-apa, cerita sama aku oke?"
+            },
+            {
+                emoji: "💖",
+                title: "I Love You So Much!",
+                text: "Semoga senyum manis kamu hari ini nggak pernah hilang. Tap layar di mana aja buat munculin cinta dari aku! ❤️"
+            }
+        ];
+
+        // Referensi Elemen DOM
+        const powerMicBtn = document.getElementById('powerMicBtn');
+        const frontCover = document.getElementById('frontCover');
+        const cardModal = document.getElementById('cardModal');
+        const modalBackdrop = document.getElementById('modalBackdrop');
+        const closeModalBtn = document.getElementById('closeModalBtn');
+
+        const slideCounter = document.getElementById('slideCounter');
+        const slideEmoji = document.getElementById('slideEmoji');
+        const slideTitle = document.getElementById('slideTitle');
+        const slideText = document.getElementById('slideText');
+        const slideContent = document.getElementById('slideContent');
+        const slideDots = document.getElementById('slideDots');
+        const prevSlideBtn = document.getElementById('prevSlideBtn');
+        const nextSlideBtn = document.getElementById('nextSlideBtn');
+
+        let currentSlide = 0;
+
+        // Fungsi memainkan nada lembut menggunakan Web Audio API (tanpa file mp3 eksternal)
+        function playSweetChime() {
+            try {
+                const AudioCtx = window.AudioContext || window.webkitAudioContext;
+                const ctx = new AudioCtx();
+                const notes = [523.25, 659.25, 783.99, 1046.50]; // Nada C5, E5, G5, C6
+
+                notes.forEach((freq, index) => {
+                    const osc = ctx.createOscillator();
+                    const gain = ctx.createGain();
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(freq, ctx.currentTime + index * 0.08);
+
+                    gain.gain.setValueAtTime(0.001, ctx.currentTime + index * 0.08);
+                    gain.gain.exponentialRampToValueAtTime(0.12, ctx.currentTime + index * 0.08 + 0.03);
+                    gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + index * 0.08 + 0.45);
+
+                    osc.connect(gain);
+                    gain.connect(ctx.destination);
+
+                    osc.start(ctx.currentTime + index * 0.08);
+                    osc.stop(ctx.currentTime + index * 0.08 + 0.5);
+                });
+            } catch (e) {
+                // Abaikan jika browser memblokir audio otomatis
+            }
         }
 
-        // Variable Status Jawaban Benar
-        let isSolved = false;
-
-        // Fungsi Cek Jawaban
-        function checkAnswer(optionNumber) {
-            if (isSolved) return; // Kalau udah bener, ga bisa diklik opsi lain
-
-            const feedbackBox = document.getElementById('feedback-box');
-            const feedbackText = document.getElementById('feedback-text');
-            const btnNext = document.getElementById('btn-next');
-
-            // Reset warna tombol opsi
-            for (let i = 1; i <= 4; i++) {
-                const btn = document.getElementById(`opt-${i}`);
-                if (i !== optionNumber) {
-                    btn.className = "w-full p-4 rounded-2xl border-2 border-pink-200 bg-white/70 text-gray-700 font-medium text-left transition-all duration-200 flex items-center justify-between opacity-50";
-                }
-            }
-
-            const targetBtn = document.getElementById(`opt-${optionNumber}`);
-
-            if (optionNumber === 1) {
-                // Susu Nobo
-                targetBtn.className = "w-full p-4 rounded-2xl border-2 border-red-500 bg-red-100 text-red-700 font-bold text-left transition-all duration-200 flex items-center justify-between";
-                feedbackBox.className = "p-4 rounded-2xl text-center font-bold text-sm mb-4 bg-red-100 text-red-600 border border-red-300 block";
-                feedbackText.innerText = 'ya bener si, TAPI AKU GA SUKA NAMANYA 😜';
-            } 
-            else if (optionNumber === 2) {
-                // Susu Frisian Flag Coklat
-                targetBtn.className = "w-full p-4 rounded-2xl border-2 border-red-500 bg-red-100 text-red-700 font-bold text-left transition-all duration-200 flex items-center justify-between";
-                feedbackBox.className = "p-4 rounded-2xl text-center font-bold text-sm mb-4 bg-red-100 text-red-600 border border-red-300 block";
-                feedbackText.innerText = 'enak enak, tapi ga cocok hm 🧐';
-            } 
-            else if (optionNumber === 3) {
-                // Susu Cimory Coklat
-                targetBtn.className = "w-full p-4 rounded-2xl border-2 border-red-500 bg-red-100 text-red-700 font-bold text-left transition-all duration-200 flex items-center justify-between";
-                feedbackBox.className = "p-4 rounded-2xl text-center font-bold text-sm mb-4 bg-red-100 text-red-600 border border-red-300 block";
-                feedbackText.innerText = 'Eeeee ywdha enak, TAPI GAMAU INI 🙈';
-            } 
-            else if (optionNumber === 4) {
-                // Susu Monyet (BENAR)
-                isSolved = true;
-                targetBtn.className = "w-full p-4 rounded-2xl border-2 border-emerald-500 bg-emerald-100 text-emerald-800 font-bold text-left transition-all duration-200 flex items-center justify-between shadow-md";
-                feedbackBox.className = "p-4 rounded-2xl text-center font-bold text-base mb-4 bg-emerald-100 text-emerald-700 border border-emerald-300 block";
-                feedbackText.innerText = 'YOAIII AI LAIK THIS MWEHEHEHHEHEHE🤤🤤🤤🤤😋😋😋😋😋😋😘😘😘😘😘😘😘';
-                
-                // Tampilkan tombol lanjut
-                btnNext.classList.remove('hidden');
-
-                // Efek Love Hujan ekstra pas bener
-                for(let i = 0; i < 20; i++) {
-                    createHeart();
-                }
-            }
-        }
-
-        // Background Heart Particles
-        function createHeart() {
-            const heart = document.createElement('div');
-            heart.classList.add('heart-particle');
-            heart.innerHTML = ['💖', '🌸', '✨', '💕', '🥰'][Math.floor(Math.random() * 5)];
-            heart.style.left = Math.random() * 100 + 'vw';
-            heart.style.animationDuration = Math.random() * 3 + 2 + 's';
-            heart.style.fontSize = Math.random() * 15 + 15 + 'px';
-            document.body.appendChild(heart);
+        // Fungsi membuat efek hati melayang saat layar di-klik/tap
+        function spawnTapHeart(x, y) {
+            const hearts = ['❤️', '💖', '💕', '💗', '🌸'];
+            const heartEl = document.createElement('div');
+            heartEl.className = 'floating-tap-heart text-2xl';
+            heartEl.textContent = hearts[Math.floor(Math.random() * hearts.length)];
+            heartEl.style.left = `${x}px`;
+            heartEl.style.top = `${y}px`;
+            document.body.appendChild(heartEl);
 
             setTimeout(() => {
-                heart.remove();
-            }, 5000);
+                heartEl.remove();
+            }, 1200);
         }
 
-        setInterval(createHeart, 400);
+        // Render isi slide di dalam kartu melayang
+        function renderSlide(index) {
+            const data = slidesData[index];
+            
+            // Efek transisi halus saat ganti slide di dalam kartu
+            slideContent.style.opacity = '0';
+            slideContent.style.transform = 'translateY(8px)';
+
+            setTimeout(() => {
+                slideCounter.textContent = `Pesan ${index + 1} / ${slidesData.length}`;
+                slideEmoji.textContent = data.emoji;
+                slideTitle.textContent = data.title;
+                slideText.textContent = data.text;
+
+                // Update tombol navigasi
+                prevSlideBtn.disabled = index === 0;
+                if (index === slidesData.length - 1) {
+                    nextSlideBtn.textContent = 'Kirim Cinta ❤️';
+                } else {
+                    nextSlideBtn.textContent = 'Lanjut →';
+                }
+
+                // Update indikator titik
+                const dots = slideDots.children;
+                for (let i = 0; i < dots.length; i++) {
+                    if (i === index) {
+                        dots[i].className = 'w-4 h-2.5 rounded-full bg-rose-500 transition-all duration-300';
+                    } else {
+                        dots[i].className = 'w-2 h-2 rounded-full bg-rose-200 transition-all duration-300';
+                    }
+                }
+
+                slideContent.style.opacity = '1';
+                slideContent.style.transform = 'translateY(0)';
+            }, 160);
+        }
+
+        // Buka kartu pop-up saat tombol power mic dipencet
+        function openCard() {
+            playSweetChime();
+            currentSlide = 0;
+            renderSlide(currentSlide);
+
+            // Sedikit mengecilkan elemen depan agar fokus ke kartu melayang, tapi tetap terlihat
+            frontCover.style.transform = 'scale(0.92)';
+            frontCover.style.opacity = '0.45';
+
+            cardModal.classList.remove('modal-hidden');
+            cardModal.classList.add('modal-visible');
+
+            // Ledakan hati kecil di sekitar tengah layar
+            const centerX = window.innerWidth / 2;
+            const centerY = window.innerHeight / 2;
+            for (let i = 0; i < 6; i++) {
+                setTimeout(() => {
+                    const offsetX = (Math.random() - 0.5) * 180;
+                    const offsetY = (Math.random() - 0.5) * 120;
+                    spawnTapHeart(centerX + offsetX, centerY + offsetY);
+                }, i * 100);
+            }
+        }
+
+        // Tutup kartu pop-up dan kembali ke cover depan
+        function closeCard() {
+            cardModal.classList.remove('modal-visible');
+            cardModal.classList.add('modal-hidden');
+
+            frontCover.style.transform = 'scale(1)';
+            frontCover.style.opacity = '1';
+        }
+
+        // Event Listeners
+        powerMicBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            openCard();
+        });
+
+        closeModalBtn.addEventListener('click', closeCard);
+        modalBackdrop.addEventListener('click', closeCard);
+
+        prevSlideBtn.addEventListener('click', () => {
+            if (currentSlide > 0) {
+                currentSlide--;
+                renderSlide(currentSlide);
+            }
+        });
+
+        nextSlideBtn.addEventListener('click', (e) => {
+            if (currentSlide < slidesData.length - 1) {
+                currentSlide++;
+                renderSlide(currentSlide);
+            } else {
+                // Jika sudah di slide terakhir, munculkan banyak hati manis
+                playSweetChime();
+                const rect = nextSlideBtn.getBoundingClientRect();
+                for (let i = 0; i < 8; i++) {
+                    setTimeout(() => {
+                        spawnTapHeart(
+                            rect.left + Math.random() * rect.width,
+                            rect.top
+                        );
+                    }, i * 80);
+                }
+            }
+        });
+
+        // Munculkan hati setiap kali pengguna tap layar di mana saja
+        document.addEventListener('click', (e) => {
+            spawnTapHeart(e.clientX, e.clientY);
+        });
     </script>
 </body>
 </html>
