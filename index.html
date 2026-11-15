@@ -767,13 +767,13 @@
         </footer>
     </section>
 
-    <!-- ================= MODAL KARTU TAMBAHAN (GAYA SEPERTI KARTU KALENDAR) ================= -->
+    <!-- ================= MODAL KARTU TAMBAHAN DI DALAM SLIDE BIOSKOP (GAYA SEPERTI KARTU KALENDAR) ================= -->
     <div id="extraWishModal" class="fixed inset-0 z-60 flex items-center justify-center p-5 sm:p-8 modal-hidden">
         
         <!-- Backdrop semi-transparan -->
         <div id="extraWishBackdrop" class="modal-backdrop fixed inset-0 bg-purple-950/40"></div>
 
-        <!-- Kartu Konten Utama (Gaya kotak pop-up seperti kalendar sebelumnya) -->
+        <!-- Kartu Konten Utama (Gaya kotak pop-up seperti kalendar) -->
         <div class="modal-card relative z-10 w-full max-w-sm sm:max-w-md bg-white/95 backdrop-blur-xl rounded-[2rem] shadow-2xl border-2 border-purple-200 p-6 sm:p-7 text-center overflow-hidden">
             
             <!-- Hiasan latar di dalam kartu -->
@@ -1359,7 +1359,7 @@
                 });
             }
 
-            // Event Listener untuk Modal Kejutan Tambahan (Gaya Kotak Kalendar)
+            // Event Listener untuk Modal Kejutan Tambahan (Gaya Kotak Kalendar di dalam Slide Bioskop)
             if (openExtraWishBtn) {
                 openExtraWishBtn.addEventListener('click', (e) => {
                     e.stopPropagation();
