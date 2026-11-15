@@ -179,23 +179,23 @@
             animation: paperSettleIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
         }
 
-        /* Efek transisi gelap ke terang (fade overlay) */
-        @keyframes darkToLightFade {
+        /* Efek kedip (flash gelap/hitam sekejap) saat pindah ke slide bioskop */
+        @keyframes screenBlinkFlash {
             0% { opacity: 0; background-color: #000000; }
             50% { opacity: 1; background-color: #000000; }
-            100% { opacity: 0; background-color: #ffffff; }
+            100% { opacity: 0; background-color: #000000; }
         }
 
-        .transition-dark-light {
-            position: absolute;
+        .screen-blink-overlay {
+            position: fixed;
             inset: 0;
-            z-index: 50;
+            z-index: 100;
             pointer-events: none;
             opacity: 0;
         }
 
-        .transition-dark-light.active {
-            animation: darkToLightFade 0.7s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+        .screen-blink-overlay.active {
+            animation: screenBlinkFlash 0.35s ease-in-out forwards;
         }
 
         /* Animasi Slide Bioskop / Filmstrip Hitam Mengalir Miring dari Kiri Bawah ke Kanan Atas */
@@ -253,7 +253,7 @@
             animation-play-state: paused;
         }
 
-        /* Animasi kelopak bunga wisteria berguguran perlahan */
+        /* Animasi kelopak bunga wisteria/sakura berguguran perlahan */
         @keyframes wisteriaFall {
             0% {
                 transform: translate3d(0, -10vh, 0) rotate(0deg) scale(0.9);
@@ -298,6 +298,9 @@
     </style>
 </head>
 <body class="bg-romantic min-h-screen w-full relative flex items-center justify-center p-4">
+
+    <!-- Efek kedip layar untuk transisi ke bioskop -->
+    <div id="screenBlinkOverlay" class="screen-blink-overlay"></div>
 
     <!-- ================= HIASAN DEPAN (SEMUA POINTER-EVENTS-NONE) ================= -->
     <div id="decorations" class="fixed inset-0 pointer-events-none overflow-hidden z-0">
@@ -386,9 +389,6 @@
             <!-- Hiasan pita / sudut di dalam kartu -->
             <div class="absolute -top-10 -right-10 w-28 h-28 bg-rose-100 rounded-full opacity-70 pointer-events-none"></div>
             <div class="absolute -bottom-10 -left-10 w-28 h-28 bg-pink-100 rounded-full opacity-70 pointer-events-none"></div>
-
-            <!-- Efek gelap ke terang saat pindah slide -->
-            <div id="darkLightOverlay" class="transition-dark-light"></div>
 
             <!-- Header Kartu -->
             <div class="relative flex items-center justify-between mb-3">
@@ -767,55 +767,74 @@
         </footer>
     </section>
 
-    <!-- ================= MODAL TAMBAHAN: UCAPAN SPESIAL & VIDEO 2.30 MENIT ================= -->
-    <div id="extraWishModal" class="fixed inset-0 z-60 hidden items-center justify-center p-4 bg-purple-950/70 backdrop-blur-md">
-        <div class="relative w-full max-w-lg bg-white/95 backdrop-blur-xl rounded-[2rem] shadow-2xl border-2 border-purple-200 p-6 sm:p-8 text-center overflow-hidden">
+    <!-- ================= MODAL KARTU TAMBAHAN (GAYA SEPERTI KARTU KALENDAR) ================= -->
+    <div id="extraWishModal" class="fixed inset-0 z-60 flex items-center justify-center p-5 sm:p-8 modal-hidden">
+        
+        <!-- Backdrop semi-transparan -->
+        <div id="extraWishBackdrop" class="modal-backdrop fixed inset-0 bg-purple-950/40"></div>
+
+        <!-- Kartu Konten Utama (Gaya kotak pop-up seperti kalendar sebelumnya) -->
+        <div class="modal-card relative z-10 w-full max-w-sm sm:max-w-md bg-white/95 backdrop-blur-xl rounded-[2rem] shadow-2xl border-2 border-purple-200 p-6 sm:p-7 text-center overflow-hidden">
             
+            <!-- Hiasan latar di dalam kartu -->
+            <div class="absolute -top-10 -right-10 w-28 h-28 bg-purple-100 rounded-full opacity-70 pointer-events-none"></div>
+            <div class="absolute -bottom-10 -left-10 w-28 h-28 bg-pink-100 rounded-full opacity-70 pointer-events-none"></div>
+
+            <!-- Header Kartu -->
+            <div class="relative flex items-center justify-between mb-3">
+                <span class="text-xs font-bold text-purple-600 bg-purple-50 px-3 py-1 rounded-full border border-purple-200">
+                    ✨ Special Surprise
+                </span>
+                <button id="closeExtraModalBtn" type="button" aria-label="Tutup kartu" class="w-8 h-8 rounded-full bg-purple-50 hover:bg-purple-100 text-purple-600 flex items-center justify-center transition-colors cursor-pointer">
+                    ✕
+                </button>
+            </div>
+
             <!-- Tahap 1: Pesan Ucapan -->
-            <div id="extraWishStep1" class="flex flex-col items-center justify-center space-y-4">
-                <div class="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center text-3xl shadow-inner mb-1">
+            <div id="extraWishStep1" class="relative flex flex-col items-center justify-center transition-all duration-300 py-3">
+                <div class="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center text-3xl shadow-inner mb-3">
                     💌
                 </div>
-                <h3 class="text-xl sm:text-2xl font-bold text-purple-950 leading-snug">
+                <h3 class="text-lg sm:text-xl font-bold text-purple-950 leading-snug mb-3">
                     "Hei! Ada yang ucapin birthday ke kamu juga lohhh"
                 </h3>
-                <p class="text-purple-700/80 text-sm font-medium">
+                <p class="text-purple-700/80 text-xs sm:text-sm font-medium mb-6">
                     Ada satu video spesial yang sudah disiapkan khusus buat kamu di slide selanjutnya...
                 </p>
-                <div class="flex items-center justify-center gap-3 pt-2">
-                    <button id="closeExtraWishModalBtn" type="button" class="px-5 py-2.5 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold text-sm cursor-pointer transition-all">
+                <div class="flex items-center justify-center gap-3 w-full">
+                    <button id="cancelExtraBtn" type="button" class="flex-1 py-2.5 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold text-sm cursor-pointer transition-all">
                         Tutup
                     </button>
-                    <button id="goToVideoSlideBtn" type="button" class="px-6 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white font-bold text-sm shadow-md cursor-pointer transition-all">
-                        Lanjut ke Video ✨
+                    <button id="goToVideoSlideBtn" type="button" class="flex-1 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white font-bold text-sm shadow-md cursor-pointer transition-all">
+                        Selanjutnya ✨
                     </button>
                 </div>
             </div>
 
             <!-- Tahap 2: Video Player (Durasi 2:30) -->
-            <div id="extraWishStep2" class="hidden flex-col items-center justify-center space-y-4">
-                <div class="w-full flex items-center justify-between mb-1">
+            <div id="extraWishStep2" class="hidden relative flex-col items-center justify-center transition-all duration-300">
+                <div class="w-full flex items-center justify-between mb-2">
                     <span class="text-xs font-bold text-purple-600 bg-purple-50 px-3 py-1 rounded-full border border-purple-200">
                         🎥 Special Video (Durasi 2:30)
                     </span>
                     <button id="backToWishTextBtn" type="button" class="text-xs font-bold text-purple-500 hover:text-purple-700 cursor-pointer">
-                        ← Kembali ke Pesan
+                        ← Kembali
                     </button>
                 </div>
 
-                <!-- Elemen Video (Ganti 'video.mp4' dengan file video kamu, atur durasi 2:30) -->
-                <div class="relative w-full aspect-video rounded-2xl overflow-hidden bg-black shadow-lg border border-purple-200">
+                <!-- Elemen Video (Ganti 'video.mp4' dengan file video kamu) -->
+                <div class="relative w-full aspect-video rounded-2xl overflow-hidden bg-black shadow-lg border border-purple-200 mb-3">
                     <video id="specialBirthdayVideo" src="video.mp4" controls preload="metadata" class="w-full h-full object-cover">
                         Browser kamu tidak mendukung pemutaran video.
                     </video>
                 </div>
 
-                <p class="text-xs font-semibold text-purple-900/80">
+                <p class="text-xs font-semibold text-purple-900/80 mb-3">
                     Nikmati videonya sampai selesai ya, sayang! ❤️
                 </p>
 
-                <button id="closeAllExtraModalBtn" type="button" class="w-full py-2.5 rounded-xl bg-purple-600 hover:bg-purple-700 text-white font-bold text-sm shadow-md cursor-pointer transition-all">
-                    Selesai & Kembali
+                <button id="finishExtraModalBtn" type="button" class="w-full py-2.5 rounded-xl bg-purple-600 hover:bg-purple-700 text-white font-bold text-sm shadow-md cursor-pointer transition-all">
+                    Selesai
                 </button>
             </div>
 
@@ -875,7 +894,7 @@
             const baseCalendarSheet = document.getElementById('baseCalendarSheet');
             const baseCalYear = document.getElementById('baseCalYear');
             const flyingSheetsContainer = document.getElementById('flyingSheetsContainer');
-            const darkLightOverlay = document.getElementById('darkLightOverlay');
+            const screenBlinkOverlay = document.getElementById('screenBlinkOverlay');
 
             // Referensi Elemen Layar Bioskop & Audio
             const cinemaScreen = document.getElementById('cinemaScreen');
@@ -887,15 +906,17 @@
             const musicLabel = document.getElementById('musicLabel');
             const bgMusicAudio = document.getElementById('bgMusicAudio');
 
-            // Referensi Elemen Modal Tambahan (Ucapan & Video)
+            // Referensi Elemen Modal Tambahan (Gaya Kotak Kalendar)
             const openExtraWishBtn = document.getElementById('openExtraWishBtn');
             const extraWishModal = document.getElementById('extraWishModal');
+            const extraWishBackdrop = document.getElementById('extraWishBackdrop');
             const extraWishStep1 = document.getElementById('extraWishStep1');
             const extraWishStep2 = document.getElementById('extraWishStep2');
-            const closeExtraWishModalBtn = document.getElementById('closeExtraWishModalBtn');
+            const closeExtraModalBtn = document.getElementById('closeExtraModalBtn');
+            const cancelExtraBtn = document.getElementById('cancelExtraBtn');
             const goToVideoSlideBtn = document.getElementById('goToVideoSlideBtn');
             const backToWishTextBtn = document.getElementById('backToWishTextBtn');
-            const closeAllExtraModalBtn = document.getElementById('closeAllExtraModalBtn');
+            const finishExtraModalBtn = document.getElementById('finishExtraModalBtn');
             const specialBirthdayVideo = document.getElementById('specialBirthdayVideo');
 
             let windTimers = [];
@@ -1188,35 +1209,37 @@
                 calendarStep1.classList.add('flex');
             }
 
-            // Tampilkan Slide 2 dengan efek gelap ke terang
+            // Tampilkan Slide 2 (Kalender ketiup angin)
             function showCalendarStep2() {
                 playSweetChime();
-                if (darkLightOverlay) {
-                    darkLightOverlay.classList.remove('active');
-                    void darkLightOverlay.offsetWidth; // trigger reflow
-                    darkLightOverlay.classList.add('active');
-                }
-
-                setTimeout(() => {
-                    slideCounter.textContent = '2008 → 2026';
-                    calendarStep1.classList.add('hidden');
-                    calendarStep1.classList.remove('flex');
-                    calendarStep2.classList.remove('hidden');
-                    calendarStep2.classList.add('flex');
-                    startCalendarWindAnimation();
-                }, 350);
+                slideCounter.textContent = '2008 → 2026';
+                calendarStep1.classList.add('hidden');
+                calendarStep1.classList.remove('flex');
+                calendarStep2.classList.remove('hidden');
+                calendarStep2.classList.add('flex');
+                startCalendarWindAnimation();
             }
 
-            // Buka Layar Penuh Bioskop Kenangan + Putar Lagu Otomatis
+            // Buka Layar Penuh Bioskop Kenangan dengan efek kedip layar (flash hitam sekejap)
             function openCinemaScreen() {
                 clearWindTimers();
-                cardModal.classList.remove('modal-visible');
-                cardModal.classList.add('modal-hidden');
 
-                cinemaScreen.classList.remove('hidden');
-                cinemaScreen.classList.add('flex');
+                if (screenBlinkOverlay) {
+                    screenBlinkOverlay.classList.remove('active');
+                    void screenBlinkOverlay.offsetWidth; // trigger reflow
+                    screenBlinkOverlay.classList.add('active');
+                }
 
-                startBackgroundMusic();
+                // Munculkan slide bioskop pas di tengah kedipan layar
+                setTimeout(() => {
+                    cardModal.classList.remove('modal-visible');
+                    cardModal.classList.add('modal-hidden');
+
+                    cinemaScreen.classList.remove('hidden');
+                    cinemaScreen.classList.add('flex');
+
+                    startBackgroundMusic();
+                }, 175);
             }
 
             // Tutup Layar Penuh Bioskop Kenangan dan kembali ke kartu kalender
@@ -1336,7 +1359,7 @@
                 });
             }
 
-            // Event Listener untuk Modal Kejutan & Video (2.30)
+            // Event Listener untuk Modal Kejutan Tambahan (Gaya Kotak Kalendar)
             if (openExtraWishBtn) {
                 openExtraWishBtn.addEventListener('click', (e) => {
                     e.stopPropagation();
@@ -1345,18 +1368,33 @@
                     extraWishStep1.classList.add('flex');
                     extraWishStep2.classList.add('hidden');
                     extraWishStep2.classList.remove('flex');
-                    extraWishModal.classList.remove('hidden');
-                    extraWishModal.classList.add('flex');
+                    extraWishModal.classList.remove('modal-hidden');
+                    extraWishModal.classList.add('modal-visible');
                 });
             }
 
-            if (closeExtraWishModalBtn) {
-                closeExtraWishModalBtn.addEventListener('click', (e) => {
+            function closeExtraModal() {
+                if (specialBirthdayVideo) specialBirthdayVideo.pause();
+                extraWishModal.classList.remove('modal-visible');
+                extraWishModal.classList.add('modal-hidden');
+            }
+
+            if (closeExtraModalBtn) {
+                closeExtraModalBtn.addEventListener('click', (e) => {
                     e.stopPropagation();
-                    extraWishModal.classList.add('hidden');
-                    extraWishModal.classList.remove('flex');
-                    if (specialBirthdayVideo) specialBirthdayVideo.pause();
+                    closeExtraModal();
                 });
+            }
+
+            if (cancelExtraBtn) {
+                cancelExtraBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    closeExtraModal();
+                });
+            }
+
+            if (extraWishBackdrop) {
+                extraWishBackdrop.addEventListener('click', closeExtraModal);
             }
 
             if (goToVideoSlideBtn) {
@@ -1385,22 +1423,10 @@
                 });
             }
 
-            if (closeAllExtraModalBtn) {
-                closeAllExtraModalBtn.addEventListener('click', (e) => {
+            if (finishExtraModalBtn) {
+                finishExtraModalBtn.addEventListener('click', (e) => {
                     e.stopPropagation();
-                    if (specialBirthdayVideo) specialBirthdayVideo.pause();
-                    extraWishModal.classList.add('hidden');
-                    extraWishModal.classList.remove('flex');
-                });
-            }
-
-            if (extraWishModal) {
-                extraWishModal.addEventListener('click', (e) => {
-                    if (e.target === extraWishModal) {
-                        if (specialBirthdayVideo) specialBirthdayVideo.pause();
-                        extraWishModal.classList.add('hidden');
-                        extraWishModal.classList.remove('flex');
-                    }
+                    closeExtraModal();
                 });
             }
 
